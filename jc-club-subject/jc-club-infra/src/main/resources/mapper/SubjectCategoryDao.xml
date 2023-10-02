@@ -94,7 +94,7 @@
         </where>
     </select>
 
-    <select id="queryPrimaryCategory" resultMap="SubjectCategoryMap">
+    <select id="queryCategory" resultMap="SubjectCategoryMap">
         select * from subject_category
         <where>
             <if test="id != null">
