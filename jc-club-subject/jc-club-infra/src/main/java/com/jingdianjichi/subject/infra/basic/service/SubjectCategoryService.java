@@ -2,6 +2,8 @@ package com.jingdianjichi.subject.infra.basic.service;
 
 import com.jingdianjichi.subject.infra.basic.entity.SubjectCategory;
 
+import java.util.List;
+
 /**
  * 题目分类(SubjectCategory)表服务接口
  *
@@ -36,4 +38,9 @@ public interface SubjectCategoryService {
      */
     boolean deleteById(Long id);
 
+    /**
+     * 查询岗位大类
+     */
+    List<SubjectCategory> queryPrimaryCategory(SubjectCategory subjectCategory);
+    
 }

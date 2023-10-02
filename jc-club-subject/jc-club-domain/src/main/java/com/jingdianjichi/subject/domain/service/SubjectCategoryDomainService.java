@@ -1,12 +1,18 @@
 package com.jingdianjichi.subject.domain.service;
 
 import com.jingdianjichi.subject.domain.entity.SubjectCategoryBO;
-import com.jingdianjichi.subject.infra.basic.entity.SubjectCategory;
-import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 
-public interface SubjectCategoryDomainServie {
+public interface SubjectCategoryDomainService {
 
     void add(SubjectCategoryBO subjectCategoryBO);
+
+    /**
+     * 查询岗位大类
+     */
+    List<SubjectCategoryBO> queryPrimaryCategory();
+
 
 }

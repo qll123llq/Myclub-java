@@ -6,12 +6,13 @@ import com.jingdianjichi.subject.application.convert.SubjectCategoryDTOConverter
 import com.jingdianjichi.subject.application.dto.SubjectCategoryDTO;
 import com.jingdianjichi.subject.common.entity.Result;
 import com.jingdianjichi.subject.domain.entity.SubjectCategoryBO;
-import com.jingdianjichi.subject.domain.service.SubjectCategoryDomainServie;
+import com.jingdianjichi.subject.domain.service.SubjectCategoryDomainService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * 刷题分类controller
@@ -25,7 +26,7 @@ import javax.annotation.Resource;
 public class SubjectCategoryController {
 
     @Resource
-    private SubjectCategoryDomainServie subjectCategoryDomainServie;
+    private SubjectCategoryDomainService subjectCategoryDomainService;
 
     @PostMapping("/add")
     public Result<Boolean> add(@RequestBody SubjectCategoryDTO subjectCategoryDTO){
@@ -37,12 +38,28 @@ public class SubjectCategoryController {
             Preconditions.checkArgument(StringUtils.isEmpty(subjectCategoryDTO.getCategoryName()),"分类名称不能为空");
             Preconditions.checkNotNull(subjectCategoryDTO.getParentId(),"分类父级id不能为空");
             SubjectCategoryBO subjectCategoryBO = SubjectCategoryDTOConverter.INSTANCE.convertBoToCategory(subjectCategoryDTO);
-            subjectCategoryDomainServie.add(subjectCategoryBO);
+            subjectCategoryDomainService.add(subjectCategoryBO);
             return Result.ok(true);
         }catch (Exception e){
             log.error("SubjectCategoryController.add.error:{}",e.getMessage(),e);
             return Result.fail(e.getMessage());
         }
     }
+
+    @PostMapping("/queryPrimaryCategory")
+    public Result<List<SubjectCategoryDTO>> queryPrimaryCategory(){
+        try {
+            List<SubjectCategoryBO> subjectCategoryBOList = subjectCategoryDomainService.queryPrimaryCategory();
+            List<SubjectCategoryDTO> subjectCategoryDTOList = SubjectCategoryDTOConverter.INSTANCE.
+                    convertBoToCategoryDTOList(subjectCategoryBOList);
+            return Result.ok(subjectCategoryDTOList);
+        }catch (Exception e){
+            log.error("SubjectCategoryController.queryPrimaryCategory.error:{}",e.getMessage(),e);
+            return Result.fail("查询失败");
+        }
+
+    }
+
+
 
 }
