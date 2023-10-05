@@ -16,4 +16,6 @@ public interface SubjectInfoConverter {
 
     SubjectInfo convertBoToInfo(SubjectInfoBO subjectInfoBO);
 
+    List<SubjectInfoBO> convertListInfoToBO(List<SubjectInfo> subjectInfoList);
+
 }

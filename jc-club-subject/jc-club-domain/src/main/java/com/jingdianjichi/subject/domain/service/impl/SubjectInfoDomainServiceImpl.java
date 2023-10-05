@@ -1,6 +1,8 @@
 package com.jingdianjichi.subject.domain.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.jingdianjichi.subject.common.entity.PageResult;
 import com.jingdianjichi.subject.common.enums.IsDeletedFlagEnum;
 import com.jingdianjichi.subject.domain.convert.SubjectCategoryConverter;
 import com.jingdianjichi.subject.domain.convert.SubjectInfoConverter;
@@ -48,8 +50,8 @@ public class SubjectInfoDomainServiceImpl implements SubjectInfoDomainService {
         List<Integer> categoryIds = subjectInfoBO.getCategoryIds();
         List<Integer> labelIds = subjectInfoBO.getLabelIds();
         List<SubjectMapping> mappingList = new LinkedList<>();
-        categoryIds.forEach(categoryId->{
-            labelIds.forEach(labelId->{
+        categoryIds.forEach(categoryId -> {
+            labelIds.forEach(labelId -> {
                 SubjectMapping subjectMapping = new SubjectMapping();
                 subjectMapping.setSubjectId(subjectInfo.getId());
                 subjectMapping.setCategoryId(Long.valueOf(categoryId));
@@ -58,6 +60,26 @@ public class SubjectInfoDomainServiceImpl implements SubjectInfoDomainService {
             });
         });
         subjectMappingService.batchInsert(mappingList);
+    }
+
+    @Override
+    public PageResult<SubjectInfoBO> getSubjectPage(SubjectInfoBO subjectInfoBO) {
+        PageResult<SubjectInfoBO> pageResult = new PageResult<>();
+        pageResult.setPageNo(subjectInfoBO.getPageNo());
+        pageResult.setPageSize(subjectInfoBO.getPageSize());
+        int start = (subjectInfoBO.getPageNo() - 1) * subjectInfoBO.getPageSize();
+        SubjectInfo subjectInfo = SubjectInfoConverter.INSTANCE.convertBoToInfo(subjectInfoBO);
+        int count = subjectInfoService.countByCondition(subjectInfo, subjectInfoBO.getCategoryId()
+                , subjectInfoBO.getLabelId());
+        if (count == 0) {
+            return pageResult;
+        }
+        List<SubjectInfo> subjectInfoList = subjectInfoService.queryPage(subjectInfo, subjectInfoBO.getCategoryId()
+                , subjectInfoBO.getLabelId(), start, subjectInfoBO.getPageSize());
+        List<SubjectInfoBO> subjectInfoBOS = SubjectInfoConverter.INSTANCE.convertListInfoToBO(subjectInfoList);
+        pageResult.setRecords(subjectInfoBOS);
+        pageResult.setTotal(count);
+        return pageResult;
     }
 
 

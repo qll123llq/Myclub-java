@@ -7,6 +7,7 @@ import com.jingdianjichi.subject.application.convert.SubjectCategoryDTOConverter
 import com.jingdianjichi.subject.application.convert.SubjectInfoDTOConverter;
 import com.jingdianjichi.subject.application.dto.SubjectCategoryDTO;
 import com.jingdianjichi.subject.application.dto.SubjectInfoDTO;
+import com.jingdianjichi.subject.common.entity.PageResult;
 import com.jingdianjichi.subject.common.entity.Result;
 import com.jingdianjichi.subject.domain.entity.SubjectAnswerBO;
 import com.jingdianjichi.subject.domain.entity.SubjectCategoryBO;
@@ -68,6 +69,27 @@ public class SubjectController {
             return Result.fail("新增题目失败");
         }
     }
+
+    /**
+     * 查询题目列表
+     */
+    @PostMapping("/getSubjectPage")
+    public Result<PageResult<SubjectInfoDTO>> getSubjectPage(@RequestBody SubjectInfoDTO subjectInfoDTO) {
+        try {
+            if (log.isInfoEnabled()) {
+                log.info("SubjectController.getSubjectPage.dto:{}", JSON.toJSONString(subjectInfoDTO));
+            }
+            Preconditions.checkNotNull(subjectInfoDTO.getCategoryId(), "分类id不能为空");
+            Preconditions.checkNotNull(subjectInfoDTO.getLabelId(), "标签id不能为空");
+            SubjectInfoBO subjectInfoBO = SubjectInfoDTOConverter.INSTANCE.convertDTOToBO(subjectInfoDTO);
+            PageResult<SubjectInfoBO> boPageResult = subjectInfoDomainService.getSubjectPage(subjectInfoBO);
+            return Result.ok(boPageResult);
+        } catch (Exception e) {
+            log.error("SubjectCategoryController.add.error:{}", e.getMessage(), e);
+            return Result.fail("新增题目失败");
+        }
+    }
+
 
 
 }

@@ -1,5 +1,6 @@
 package com.jingdianjichi.subject.domain.service;
 
+import com.jingdianjichi.subject.common.entity.PageResult;
 import com.jingdianjichi.subject.domain.entity.SubjectInfoBO;
 import com.jingdianjichi.subject.domain.entity.SubjectLabelBO;
 
@@ -18,4 +19,10 @@ public interface SubjectInfoDomainService {
      */
     void add(SubjectInfoBO subjectInfoBO);
 
+    /**
+     * 分页查询
+     */
+    PageResult<SubjectInfoBO> getSubjectPage(SubjectInfoBO subjectInfoBO);
+
 }
+
