@@ -5,6 +5,7 @@ import com.jingdianjichi.subject.domain.convert.RadioSubjectConverter;
 import com.jingdianjichi.subject.domain.entity.SubjectInfoBO;
 import com.jingdianjichi.subject.infra.basic.entity.SubjectRadio;
 import com.jingdianjichi.subject.infra.basic.service.SubjectRadioService;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.util.LinkedList;
@@ -16,6 +17,7 @@ import java.util.List;
  * @author: ChickenWing
  * @date: 2023/10/5
  */
+@Component
 public class RadioTypeHandler implements SubjectTypeHandler {
 
     @Resource
