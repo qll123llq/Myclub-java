@@ -2,6 +2,7 @@ package com.jingdianjichi.subject.domain.handler.subject;
 
 import com.jingdianjichi.subject.common.enums.SubjectInfoTypeEnum;
 import com.jingdianjichi.subject.domain.entity.SubjectInfoBO;
+import com.jingdianjichi.subject.domain.entity.SubjectOptionBO;
 
 public interface SubjectTypeHandler {
 
@@ -14,5 +15,10 @@ public interface SubjectTypeHandler {
      * 实际的题目的插入
      */
     void add(SubjectInfoBO subjectInfoBO);
+
+    /**
+     * 实际的题目的插入
+     */
+    SubjectOptionBO query(int subjectId);
 
 }

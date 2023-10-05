@@ -2,6 +2,7 @@ package com.jingdianjichi.subject.domain.handler.subject;
 
 import com.jingdianjichi.subject.common.enums.SubjectInfoTypeEnum;
 import com.jingdianjichi.subject.domain.entity.SubjectInfoBO;
+import com.jingdianjichi.subject.domain.entity.SubjectOptionBO;
 import org.springframework.stereotype.Component;
 
 /**
@@ -20,5 +21,10 @@ public class MultipleTypeHandler implements SubjectTypeHandler{
 
     @Override
     public void add(SubjectInfoBO subjectInfoBO) {
+    }
+
+    @Override
+    public SubjectOptionBO query(int subjectId) {
+        return null;
     }
 }

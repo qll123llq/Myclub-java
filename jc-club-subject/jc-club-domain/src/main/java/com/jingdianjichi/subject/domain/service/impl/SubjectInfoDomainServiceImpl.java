@@ -8,6 +8,7 @@ import com.jingdianjichi.subject.domain.convert.SubjectCategoryConverter;
 import com.jingdianjichi.subject.domain.convert.SubjectInfoConverter;
 import com.jingdianjichi.subject.domain.entity.SubjectCategoryBO;
 import com.jingdianjichi.subject.domain.entity.SubjectInfoBO;
+import com.jingdianjichi.subject.domain.entity.SubjectOptionBO;
 import com.jingdianjichi.subject.domain.handler.subject.SubjectTypeHandler;
 import com.jingdianjichi.subject.domain.handler.subject.SubjectTypeHandlerFactory;
 import com.jingdianjichi.subject.domain.service.SubjectCategoryDomainService;
@@ -22,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -80,6 +82,19 @@ public class SubjectInfoDomainServiceImpl implements SubjectInfoDomainService {
         pageResult.setRecords(subjectInfoBOS);
         pageResult.setTotal(count);
         return pageResult;
+    }
+
+    @Override
+    public SubjectInfoBO querySubjectInfo(SubjectInfoBO subjectInfoBO) {
+        SubjectInfo subjectInfo = subjectInfoService.queryById(subjectInfoBO.getId());
+        Integer subjectType = subjectInfo.getSubjectType();
+        SubjectTypeHandler handler = subjectTypeHandlerFactory.getHandler(subjectInfo.getSubjectType());
+        SubjectOptionBO optionBO = handler.query(subjectInfo.getId().intValue());
+        SubjectInfoBO bo = SubjectInfoConverter.INSTANCE.convertOptionAndInfoToBo(optionBO, subjectInfo);
+        List<String> labelNameList = new ArrayList<>();
+        //转换
+        bo.setLabelName(labelNameList);
+        return bo;
     }
 
 

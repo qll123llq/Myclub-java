@@ -3,6 +3,7 @@ package com.jingdianjichi.subject.domain.handler.subject;
 import com.jingdianjichi.subject.common.enums.SubjectInfoTypeEnum;
 import com.jingdianjichi.subject.domain.convert.RadioSubjectConverter;
 import com.jingdianjichi.subject.domain.entity.SubjectInfoBO;
+import com.jingdianjichi.subject.domain.entity.SubjectOptionBO;
 import com.jingdianjichi.subject.infra.basic.entity.SubjectRadio;
 import com.jingdianjichi.subject.infra.basic.service.SubjectRadioService;
 import org.springframework.stereotype.Component;
@@ -39,4 +40,10 @@ public class RadioTypeHandler implements SubjectTypeHandler {
         });
         subjectRadioService.batchInsert(subjectRadioList);
     }
+
+    @Override
+    public SubjectOptionBO query(int subjectId) {
+        return null;
+    }
+
 }
