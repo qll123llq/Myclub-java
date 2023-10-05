@@ -12,12 +12,15 @@ import com.jingdianjichi.subject.domain.service.SubjectCategoryDomainService;
 import com.jingdianjichi.subject.domain.service.SubjectInfoDomainService;
 import com.jingdianjichi.subject.infra.basic.entity.SubjectCategory;
 import com.jingdianjichi.subject.infra.basic.entity.SubjectInfo;
+import com.jingdianjichi.subject.infra.basic.entity.SubjectMapping;
 import com.jingdianjichi.subject.infra.basic.service.SubjectCategoryService;
 import com.jingdianjichi.subject.infra.basic.service.SubjectInfoService;
+import com.jingdianjichi.subject.infra.basic.service.SubjectMappingService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.LinkedList;
 import java.util.List;
 
 @Service
@@ -26,6 +29,9 @@ public class SubjectInfoDomainServiceImpl implements SubjectInfoDomainService {
 
     @Resource
     private SubjectInfoService subjectInfoService;
+
+    @Resource
+    private SubjectMappingService subjectMappingService;
 
     @Resource
     private SubjectTypeHandlerFactory subjectTypeHandlerFactory;
@@ -39,6 +45,19 @@ public class SubjectInfoDomainServiceImpl implements SubjectInfoDomainService {
         subjectInfoService.insert(subjectInfo);
         SubjectTypeHandler handler = subjectTypeHandlerFactory.getHandler(subjectInfo.getSubjectType());
         handler.add(subjectInfoBO);
+        List<Integer> categoryIds = subjectInfoBO.getCategoryIds();
+        List<Integer> labelIds = subjectInfoBO.getLabelIds();
+        List<SubjectMapping> mappingList = new LinkedList<>();
+        categoryIds.forEach(categoryId->{
+            labelIds.forEach(labelId->{
+                SubjectMapping subjectMapping = new SubjectMapping();
+                subjectMapping.setSubjectId(subjectInfo.getId());
+                subjectMapping.setCategoryId(Long.valueOf(categoryId));
+                subjectMapping.setLabelId(Long.valueOf(labelId));
+                mappingList.add(subjectMapping);
+            });
+        });
+        subjectMappingService.batchInsert(mappingList);
     }
 
 
