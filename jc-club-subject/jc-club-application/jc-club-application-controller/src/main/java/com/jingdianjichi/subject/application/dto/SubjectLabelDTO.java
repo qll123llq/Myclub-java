@@ -3,7 +3,6 @@ package com.jingdianjichi.subject.application.dto;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  * 题目标签dto

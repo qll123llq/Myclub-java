@@ -3,22 +3,20 @@ package com.jingdianjichi.subject.application.controller;
 import com.alibaba.fastjson.JSON;
 import com.google.common.base.Preconditions;
 import com.jingdianjichi.subject.application.convert.SubjectAnswerDTOConverter;
-import com.jingdianjichi.subject.application.convert.SubjectCategoryDTOConverter;
 import com.jingdianjichi.subject.application.convert.SubjectInfoDTOConverter;
-import com.jingdianjichi.subject.application.dto.SubjectCategoryDTO;
 import com.jingdianjichi.subject.application.dto.SubjectInfoDTO;
 import com.jingdianjichi.subject.common.entity.PageResult;
 import com.jingdianjichi.subject.common.entity.Result;
 import com.jingdianjichi.subject.domain.entity.SubjectAnswerBO;
-import com.jingdianjichi.subject.domain.entity.SubjectCategoryBO;
 import com.jingdianjichi.subject.domain.entity.SubjectInfoBO;
 import com.jingdianjichi.subject.domain.service.SubjectInfoDomainService;
-import com.jingdianjichi.subject.infra.basic.entity.SubjectCategory;
-import com.jingdianjichi.subject.infra.basic.service.SubjectCategoryService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -107,7 +105,5 @@ public class SubjectController {
             return Result.fail("查询题目详情失败");
         }
     }
-
-
 
 }

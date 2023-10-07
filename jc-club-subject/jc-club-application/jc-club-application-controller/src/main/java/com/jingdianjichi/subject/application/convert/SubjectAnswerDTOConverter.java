@@ -1,14 +1,18 @@
 package com.jingdianjichi.subject.application.convert;
 
 import com.jingdianjichi.subject.application.dto.SubjectAnswerDTO;
-import com.jingdianjichi.subject.application.dto.SubjectInfoDTO;
 import com.jingdianjichi.subject.domain.entity.SubjectAnswerBO;
-import com.jingdianjichi.subject.domain.entity.SubjectInfoBO;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
 import java.util.List;
 
+/**
+ * 题目答案dto转换器
+ * 
+ * @author: ChickenWing
+ * @date: 2023/10/8
+ */
 @Mapper
 public interface SubjectAnswerDTOConverter {
 

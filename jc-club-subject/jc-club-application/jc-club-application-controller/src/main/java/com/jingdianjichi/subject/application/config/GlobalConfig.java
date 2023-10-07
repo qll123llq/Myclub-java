@@ -12,7 +12,7 @@ import java.util.List;
 
 /**
  * mvc的全局处理
- * 
+ *
  * @author: ChickenWing
  * @date: 2023/10/7
  */
@@ -25,12 +25,15 @@ public class GlobalConfig extends WebMvcConfigurationSupport {
         converters.add(mappingJackson2HttpMessageConverter());
     }
 
+    /**
+     * 自定义mappingJackson2HttpMessageConverter
+     * 目前实现：空值忽略，空字段可返回
+     */
     private MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter() {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter(objectMapper);
-        return converter;
+        return new MappingJackson2HttpMessageConverter(objectMapper);
     }
 
 
