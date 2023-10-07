@@ -1,6 +1,8 @@
 package com.jingdianjichi.subject.domain.handler.subject;
 
+import com.jingdianjichi.subject.common.enums.IsDeletedFlagEnum;
 import com.jingdianjichi.subject.common.enums.SubjectInfoTypeEnum;
+import com.jingdianjichi.subject.domain.convert.BriefSubjectConverter;
 import com.jingdianjichi.subject.domain.entity.SubjectInfoBO;
 import com.jingdianjichi.subject.domain.entity.SubjectOptionBO;
 import com.jingdianjichi.subject.infra.basic.entity.SubjectBrief;
@@ -28,6 +30,10 @@ public class BriefTypeHandler implements SubjectTypeHandler{
 
     @Override
     public void add(SubjectInfoBO subjectInfoBO) {
+        SubjectBrief subjectBrief = BriefSubjectConverter.INSTANCE.convertBoToEntity(subjectInfoBO);
+        subjectBrief.setSubjectId(subjectInfoBO.getId().intValue());
+        subjectBrief.setIsDeleted(IsDeletedFlagEnum.UN_DELETED.getCode());
+        subjectBriefService.insert(subjectBrief);
     }
 
     @Override

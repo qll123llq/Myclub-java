@@ -21,6 +21,7 @@ import com.jingdianjichi.subject.infra.basic.service.SubjectInfoService;
 import com.jingdianjichi.subject.infra.basic.service.SubjectMappingService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -41,13 +42,16 @@ public class SubjectInfoDomainServiceImpl implements SubjectInfoDomainService {
     private SubjectTypeHandlerFactory subjectTypeHandlerFactory;
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void add(SubjectInfoBO subjectInfoBO) {
         if (log.isInfoEnabled()) {
             log.info("SubjectInfoDomainServiceImpl.add.bo:{}", JSON.toJSONString(subjectInfoBO));
         }
         SubjectInfo subjectInfo = SubjectInfoConverter.INSTANCE.convertBoToInfo(subjectInfoBO);
+        subjectInfo.setIsDeleted(IsDeletedFlagEnum.UN_DELETED.getCode());
         subjectInfoService.insert(subjectInfo);
         SubjectTypeHandler handler = subjectTypeHandlerFactory.getHandler(subjectInfo.getSubjectType());
+        subjectInfoBO.setId(subjectInfo.getId());
         handler.add(subjectInfoBO);
         List<Integer> categoryIds = subjectInfoBO.getCategoryIds();
         List<Integer> labelIds = subjectInfoBO.getLabelIds();
@@ -58,6 +62,7 @@ public class SubjectInfoDomainServiceImpl implements SubjectInfoDomainService {
                 subjectMapping.setSubjectId(subjectInfo.getId());
                 subjectMapping.setCategoryId(Long.valueOf(categoryId));
                 subjectMapping.setLabelId(Long.valueOf(labelId));
+                subjectMapping.setIsDeleted(IsDeletedFlagEnum.UN_DELETED.getCode());
                 mappingList.add(subjectMapping);
             });
         });

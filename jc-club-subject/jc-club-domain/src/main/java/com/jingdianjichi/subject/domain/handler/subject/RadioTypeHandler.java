@@ -1,5 +1,6 @@
 package com.jingdianjichi.subject.domain.handler.subject;
 
+import com.jingdianjichi.subject.common.enums.IsDeletedFlagEnum;
 import com.jingdianjichi.subject.common.enums.SubjectInfoTypeEnum;
 import com.jingdianjichi.subject.domain.convert.RadioSubjectConverter;
 import com.jingdianjichi.subject.domain.entity.SubjectInfoBO;
@@ -36,6 +37,7 @@ public class RadioTypeHandler implements SubjectTypeHandler {
         subjectInfoBO.getOptionList().forEach(option -> {
             SubjectRadio subjectRadio = RadioSubjectConverter.INSTANCE.convertBoToEntity(option);
             subjectRadio.setSubjectId(subjectInfoBO.getId());
+            subjectRadio.setIsDeleted(IsDeletedFlagEnum.UN_DELETED.getCode());
             subjectRadioList.add(subjectRadio);
         });
         subjectRadioService.batchInsert(subjectRadioList);
