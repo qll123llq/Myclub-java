@@ -2,6 +2,7 @@ package com.jingdianjichi.subject.domain.handler.subject;
 
 import com.jingdianjichi.subject.common.enums.IsDeletedFlagEnum;
 import com.jingdianjichi.subject.common.enums.SubjectInfoTypeEnum;
+import com.jingdianjichi.subject.domain.convert.JudgeSubjectConverter;
 import com.jingdianjichi.subject.domain.convert.MultipleSubjectConverter;
 import com.jingdianjichi.subject.domain.entity.SubjectAnswerBO;
 import com.jingdianjichi.subject.domain.entity.SubjectInfoBO;
@@ -45,6 +46,12 @@ public class JudgeTypeHandler implements SubjectTypeHandler{
 
     @Override
     public SubjectOptionBO query(int subjectId) {
-        return null;
+        SubjectJudge subjectJudge = new SubjectJudge();
+        subjectJudge.setSubjectId(Long.valueOf(subjectId));
+        List<SubjectJudge> result = subjectJudgeService.queryByCondition(subjectJudge);
+        List<SubjectAnswerBO> subjectAnswerBOList = JudgeSubjectConverter.INSTANCE.convertEntityToBoList(result);
+        SubjectOptionBO subjectOptionBO = new SubjectOptionBO();
+        subjectOptionBO.setOptionList(subjectAnswerBOList);
+        return subjectOptionBO;
     }
 }

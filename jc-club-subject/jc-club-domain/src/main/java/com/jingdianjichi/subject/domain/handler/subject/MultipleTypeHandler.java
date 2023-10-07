@@ -2,10 +2,13 @@ package com.jingdianjichi.subject.domain.handler.subject;
 
 import com.jingdianjichi.subject.common.enums.IsDeletedFlagEnum;
 import com.jingdianjichi.subject.common.enums.SubjectInfoTypeEnum;
+import com.jingdianjichi.subject.domain.convert.JudgeSubjectConverter;
 import com.jingdianjichi.subject.domain.convert.MultipleSubjectConverter;
 import com.jingdianjichi.subject.domain.convert.RadioSubjectConverter;
+import com.jingdianjichi.subject.domain.entity.SubjectAnswerBO;
 import com.jingdianjichi.subject.domain.entity.SubjectInfoBO;
 import com.jingdianjichi.subject.domain.entity.SubjectOptionBO;
+import com.jingdianjichi.subject.infra.basic.entity.SubjectJudge;
 import com.jingdianjichi.subject.infra.basic.entity.SubjectMultiple;
 import com.jingdianjichi.subject.infra.basic.entity.SubjectRadio;
 import com.jingdianjichi.subject.infra.basic.service.SubjectMultipleService;
@@ -47,6 +50,12 @@ public class MultipleTypeHandler implements SubjectTypeHandler{
 
     @Override
     public SubjectOptionBO query(int subjectId) {
-        return null;
+        SubjectMultiple subjectMultiple = new SubjectMultiple();
+        subjectMultiple.setSubjectId(Long.valueOf(subjectId));
+        List<SubjectMultiple> result = subjectMultipleService.queryByCondition(subjectMultiple);
+        List<SubjectAnswerBO> subjectAnswerBOList = MultipleSubjectConverter.INSTANCE.convertEntityToBoList(result);
+        SubjectOptionBO subjectOptionBO = new SubjectOptionBO();
+        subjectOptionBO.setOptionList(subjectAnswerBOList);
+        return subjectOptionBO;
     }
 }

@@ -1,5 +1,8 @@
 package com.jingdianjichi.subject.common.entity;
 
+import lombok.Data;
+
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 
@@ -9,7 +12,8 @@ import java.util.List;
  * @author: ChickenWing
  * @date: 2023/10/5
  */
-public class PageResult<T> {
+@Data
+public class PageResult<T> implements Serializable {
 
     private Integer pageNo = 1;
 
