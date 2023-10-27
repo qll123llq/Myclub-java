@@ -25,5 +25,9 @@ public class FileController {
         return allBucket.get(0);
     }
 
+    @RequestMapping("/getUrl")
+    public String getUrl(String bucketName,String objectName) throws Exception {
+        return fileService.getUrl(bucketName,objectName);
+    }
 
 }
