@@ -30,4 +30,22 @@ public class AuthUserDomainServiceImpl implements AuthUserDomainService {
         //要把当前用户的角色和权限都刷到我们的redis里
         return count > 0;
     }
+
+    @Override
+    public Boolean update(AuthUserBO authUserBO) {
+        AuthUser authUser = AuthUserBOConverter.INSTANCE.convertBOToEntity(authUserBO);
+        Integer count = authUserService.update(authUser);
+        //有任何的更新，都要与缓存进行同步的修改
+        return count > 0;
+    }
+
+    @Override
+    public Boolean delete(AuthUserBO authUserBO) {
+        AuthUser authUser = new AuthUser();
+        authUser.setId(authUserBO.getId());
+        authUser.setIsDeleted(IsDeletedFlagEnum.DELETED.getCode());
+        Integer count = authUserService.update(authUser);
+        //有任何的更新，都要与缓存进行同步的修改
+        return count > 0;
+    }
 }
