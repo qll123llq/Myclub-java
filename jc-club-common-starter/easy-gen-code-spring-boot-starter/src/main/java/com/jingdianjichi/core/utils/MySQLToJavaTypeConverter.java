@@ -18,7 +18,7 @@ public class MySQLToJavaTypeConverter {
     private static final Map<String, Item> typeMap = new HashMap<>();
 
     static {
-        typeMap.put("tinyint", new Item(false, "Byte"));
+        typeMap.put("tinyint", new Item(false, "Integer"));
         typeMap.put("smallint", new Item(false, "Short"));
         typeMap.put("mediumint", new Item(false, "Integer"));
         typeMap.put("int", new Item(false, "Integer"));
