@@ -1,10 +1,10 @@
-package com.jingdianjichi.auth.infra.basic.service.impl;
+package com.jingdianjichi.${module}.infra.basic.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.jingdianjichi.auth.infra.basic.entity.${modelName};
-import com.jingdianjichi.auth.infra.basic.mapper.${modelName}Dao;
-import com.jingdianjichi.auth.infra.basic.service.${modelName}Service;
+import com.jingdianjichi.${module}.infra.basic.entity.${modelName};
+import com.jingdianjichi.${module}.infra.basic.mapper.${modelName}Dao;
+import com.jingdianjichi.${module}.infra.basic.service.${modelName}Service;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

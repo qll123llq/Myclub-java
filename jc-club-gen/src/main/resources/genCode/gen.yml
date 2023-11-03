@@ -1,4 +1,3 @@
-mapperInfos: genCode/mapper.yml
 jdbc:
   dbName: jc-club
   tableName: activity_task_config
@@ -7,10 +6,10 @@ jdbc:
   password: 123456
   driver: com.mysql.cj.jdbc.Driver
 
+mapperInfos: genCode/authMapper.yml
 params:
   author: loser
   module: auth
   api: /test
   removePre: true
   genDate: now()
-
