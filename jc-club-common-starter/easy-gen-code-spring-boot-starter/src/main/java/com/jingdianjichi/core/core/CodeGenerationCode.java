@@ -11,11 +11,7 @@ import com.jingdianjichi.core.core.sdk.FilePutContextHandler;
 import com.jingdianjichi.core.core.sdk.PostCurFiledContextAware;
 import com.jingdianjichi.core.entity.Context;
 import com.jingdianjichi.core.entity.MapperInfo;
-import com.jingdianjichi.core.utils.CodeGeneratorUtils;
-import com.jingdianjichi.core.utils.ConfigUtils;
-import com.jingdianjichi.core.utils.ContextUtils;
-import com.jingdianjichi.core.utils.FunctionUtils;
-import com.jingdianjichi.core.utils.YamlUtils;
+import com.jingdianjichi.core.utils.*;
 import org.apache.velocity.VelocityContext;
 
 import java.io.File;
@@ -58,18 +54,18 @@ public class CodeGenerationCode {
             List<MapperInfo> infos = getMapperInfos(genConfig, context, aware);
 
             // 04 通过映射关系生成代码文件
-            genCode(infos);
+            genCode(infos, genConfig.getParams().getOrDefault("templateBasePath", "").toString());
         } catch (Exception e) {
             e.printStackTrace();
         }
 
     }
 
-    private static void genCode(List<MapperInfo> infos) {
+    private static void genCode(List<MapperInfo> infos, String templateBasePath) {
 
         AtomicInteger count = new AtomicInteger(1);
         infos.forEach(info -> {
-            CodeGeneratorUtils codeGenerator = new CodeGeneratorUtils();
+            CodeGeneratorUtils codeGenerator = new CodeGeneratorUtils(templateBasePath);
             codeGenerator.generateCode(
                     info.getContext(),
                     info.getTemplatePath(),
@@ -197,11 +193,24 @@ public class CodeGenerationCode {
     }
 
     private static String getTargetPath(String module, String packageName, String filePath) {
-        if (StrUtil.isEmpty(filePath)) {
-            return getCurPath().substring(0, getCurPath().length() - 2) + module + "src/main/java/" + packageName.replaceAll("\\.", "/");
-        } else {
-            return getCurPath().substring(0, getCurPath().length() - 2) + module + filePath;
+
+        if (StrUtil.isEmpty(module)) {
+            module = "/";
         }
+        if (SystemUtils.isMacOs()) {
+            if (StrUtil.isEmpty(filePath)) {
+                return getCurPath().substring(0, getCurPath().length() - 2) + module + "src/main/java/" + packageName.replaceAll("\\.", "/");
+            } else {
+                return getCurPath().substring(0, getCurPath().length() - 2) + module + filePath;
+            }
+        } else {
+            if (StrUtil.isEmpty(filePath)) {
+                return getCurPath() + module + "src/main/java/" + packageName.replaceAll("\\.", "\\");
+            } else {
+                return getCurPath() + module + filePath;
+            }
+        }
+
     }
 
     private static URL getRealResPath(String res) {
@@ -210,13 +219,25 @@ public class CodeGenerationCode {
     }
 
     private static String getResPath(String res) {
-        ClassLoader classLoader = CodeGenerationCode.class.getClassLoader();
-        return classLoader.getResource(res).getPath()
-                .replaceAll(getCurPath().substring(0, getCurPath().length() - 1), "");
+
+        if (SystemUtils.isMacOs()) {
+            ClassLoader classLoader = CodeGenerationCode.class.getClassLoader();
+            return classLoader.getResource(res).getPath()
+                    .replaceAll(getCurPath().substring(0, getCurPath().length() - 1), "");
+        } else {
+            ClassLoader classLoader = CodeGenerationCode.class.getClassLoader();
+            String S = classLoader.getResource(res).getPath().substring(1).replaceAll("target/classes/", "");
+            return res;
+        }
+
     }
 
     private static String getCurPath() {
-        return new File("./").getAbsolutePath();
+        if (SystemUtils.isMacOs()) {
+            return new File("./").getAbsolutePath();
+        } else {
+            return System.getProperty("user.dir");
+        }
     }
 
 }
