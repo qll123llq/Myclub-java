@@ -1,5 +1,6 @@
 package com.jingdianjichi.auth.infra.basic.mapper;
 
+import com.jingdianjichi.auth.infra.basic.entity.AuthRole;
 import com.jingdianjichi.auth.infra.basic.entity.AuthRolePermission;
 import org.apache.ibatis.annotations.Param;
 import java.util.List;
