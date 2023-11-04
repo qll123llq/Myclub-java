@@ -225,8 +225,6 @@ public class CodeGenerationCode {
             return classLoader.getResource(res).getPath()
                     .replaceAll(getCurPath().substring(0, getCurPath().length() - 1), "");
         } else {
-            ClassLoader classLoader = CodeGenerationCode.class.getClassLoader();
-            String S = classLoader.getResource(res).getPath().substring(1).replaceAll("target/classes/", "");
             return res;
         }
 
