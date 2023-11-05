@@ -19,8 +19,11 @@ public class CodeGeneratorUtils {
 
     private final VelocityEngine velocityEngine;
 
-    public CodeGeneratorUtils() {
+    public CodeGeneratorUtils(String templateBasePath) {
         this.velocityEngine = new VelocityEngine();
+        if (SystemUtils.isWindows()) {
+            this.velocityEngine.setProperty("file.resource.loader.path", templateBasePath);
+        }
         velocityEngine.init();
 
     }

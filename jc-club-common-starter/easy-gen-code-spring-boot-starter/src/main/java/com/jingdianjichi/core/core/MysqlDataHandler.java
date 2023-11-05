@@ -52,7 +52,11 @@ public class MysqlDataHandler {
         if (CollectionUtil.isEmpty(params)) {
             return jdbcTemplate.query(sql, rowMapper).get(0).getTableComment();
         }
-        return jdbcTemplate.query(sql, rowMapper, params.toArray()).get(0).getTableComment();
+        List<TableInfo> query = jdbcTemplate.query(sql, rowMapper, params.toArray());
+        if (CollectionUtil.isEmpty(query)) {
+            throw new RuntimeException("表不存在：" + tableName);
+        }
+        return query.get(0).getTableComment();
 
     }
 
