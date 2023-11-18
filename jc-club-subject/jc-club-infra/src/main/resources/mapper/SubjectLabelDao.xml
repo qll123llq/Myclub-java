@@ -134,7 +134,7 @@
         update_time)
         values
         <foreach collection="entities" item="entity" separator=",">
-            (#{entity.labelName}, #{entity.sortNum},,#{entity.categoryId}, #{entity.createdBy}, #{entity.createdTime},
+            (#{entity.labelName}, #{entity.sortNum},#{entity.categoryId}, #{entity.createdBy}, #{entity.createdTime},
             #{entity.updateBy},
             #{entity.isDeleted}, #{entity.updateTime})
         </foreach>
