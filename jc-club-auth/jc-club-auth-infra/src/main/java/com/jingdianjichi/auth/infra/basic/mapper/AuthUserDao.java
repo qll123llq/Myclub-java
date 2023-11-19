@@ -77,5 +77,7 @@ public interface AuthUserDao {
      */
     int deleteById(Long id);
 
+    Integer updateByUserName(AuthUser authUser);
+
 }
 

@@ -49,4 +49,6 @@ public interface AuthUserService {
      */
     List<AuthUser> queryByCondition(AuthUser authUser);
 
+    Integer updateByUserName(AuthUser authUser);
+
 }
