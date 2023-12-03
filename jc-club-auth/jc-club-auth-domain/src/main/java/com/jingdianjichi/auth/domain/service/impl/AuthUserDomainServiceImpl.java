@@ -73,6 +73,9 @@ public class AuthUserDomainServiceImpl implements AuthUserDomainService {
         if (StringUtils.isNotBlank(authUser.getPassword())) {
             authUser.setPassword(SaSecureUtil.md5BySalt(authUser.getPassword(), salt));
         }
+        if (StringUtils.isBlank(authUser.getAvatar())) {
+            authUser.setAvatar("http://117.72.10.84:9000/user/icon/微信图片_20231203153718.png");
+        }
         authUser.setStatus(AuthUserStatusEnum.OPEN.getCode());
         authUser.setIsDeleted(IsDeletedFlagEnum.UN_DELETED.getCode());
         Integer count = authUserService.insert(authUser);
