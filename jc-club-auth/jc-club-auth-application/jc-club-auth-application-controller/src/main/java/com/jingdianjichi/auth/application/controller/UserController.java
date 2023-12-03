@@ -2,14 +2,13 @@ package com.jingdianjichi.auth.application.controller;
 
 import cn.dev33.satoken.stp.SaTokenInfo;
 import cn.dev33.satoken.stp.StpUtil;
-import cn.dev33.satoken.util.SaResult;
 import com.alibaba.fastjson.JSON;
 import com.google.common.base.Preconditions;
 import com.jingdianjichi.auth.application.convert.AuthUserDTOConverter;
-import com.jingdianjichi.auth.application.dto.AuthUserDTO;
-import com.jingdianjichi.auth.common.entity.Result;
 import com.jingdianjichi.auth.domain.entity.AuthUserBO;
 import com.jingdianjichi.auth.domain.service.AuthUserDomainService;
+import com.jingdianjichi.auth.entity.AuthUserDTO;
+import com.jingdianjichi.auth.entity.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
