@@ -30,7 +30,7 @@ public class LoginFilter implements GlobalFilter {
         String url = request.getURI().getPath();
         log.info("LoginFilter.filter.url:{}", url);
         if (url.equals("/auth/user/doLogin")) {
-            chain.filter(exchange);
+            return chain.filter(exchange);
         }
         SaTokenInfo tokenInfo = StpUtil.getTokenInfo();
         String loginId = (String) tokenInfo.getLoginId();
