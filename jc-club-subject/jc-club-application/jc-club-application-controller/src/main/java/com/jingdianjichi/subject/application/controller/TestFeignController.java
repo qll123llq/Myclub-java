@@ -1,20 +1,8 @@
 package com.jingdianjichi.subject.application.controller;
 
-import com.alibaba.fastjson.JSON;
-import com.google.common.base.Preconditions;
-import com.jingdianjichi.subject.application.convert.SubjectCategoryDTOConverter;
-import com.jingdianjichi.subject.application.convert.SubjectLabelDTOConverter;
-import com.jingdianjichi.subject.application.dto.SubjectCategoryDTO;
-import com.jingdianjichi.subject.application.dto.SubjectLabelDTO;
-import com.jingdianjichi.subject.application.util.LoginUtil;
-import com.jingdianjichi.subject.common.entity.Result;
-import com.jingdianjichi.subject.domain.entity.SubjectCategoryBO;
-import com.jingdianjichi.subject.domain.service.SubjectCategoryDomainService;
-import com.jingdianjichi.subject.infra.basic.service.SubjectEsService;
 import com.jingdianjichi.subject.infra.entity.UserInfo;
 import com.jingdianjichi.subject.infra.rpc.UserRpc;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -35,34 +23,10 @@ public class TestFeignController {
     @Resource
     private UserRpc userRpc;
 
-    @Resource
-    private SubjectEsService subjectEsService;
-
     @GetMapping("testFeign")
     public void testFeign() {
         UserInfo userInfo = userRpc.getUserInfo("jichi");
         log.info("testFeign.userInfo:{}", userInfo);
     }
-
-    @GetMapping("testCreateIndex")
-    public void testCreateIndex() {
-        subjectEsService.createIndex();
-    }
-
-    @GetMapping("addDocs")
-    public void addDocs() {
-        subjectEsService.addDoc();
-    }
-
-    @GetMapping("find")
-    public void find() {
-        subjectEsService.find();
-    }
-
-    @GetMapping("search")
-    public void search() {
-        subjectEsService.search();
-    }
-
 
 }

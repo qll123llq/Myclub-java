@@ -1,13 +1,12 @@
 package com.jingdianjichi.subject.infra.basic.service;
 
+import com.jingdianjichi.subject.common.entity.PageResult;
+import com.jingdianjichi.subject.infra.basic.entity.SubjectInfoEs;
+
 public interface SubjectEsService {
 
-    void createIndex();
+    boolean insert(SubjectInfoEs subjectInfoEs);
 
-    void addDoc();
-
-    void find();
-
-    void search();
+    PageResult<SubjectInfoEs> querySubjectList(SubjectInfoEs subjectInfoEs);
 
 }

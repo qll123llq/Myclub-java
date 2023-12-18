@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jingdianjichi.subject.common.entity.PageResult;
 import com.jingdianjichi.subject.common.enums.IsDeletedFlagEnum;
+import com.jingdianjichi.subject.common.util.IdWorkerUtil;
 import com.jingdianjichi.subject.domain.convert.SubjectCategoryConverter;
 import com.jingdianjichi.subject.domain.convert.SubjectInfoConverter;
 import com.jingdianjichi.subject.domain.entity.SubjectCategoryBO;
@@ -13,20 +14,15 @@ import com.jingdianjichi.subject.domain.handler.subject.SubjectTypeHandler;
 import com.jingdianjichi.subject.domain.handler.subject.SubjectTypeHandlerFactory;
 import com.jingdianjichi.subject.domain.service.SubjectCategoryDomainService;
 import com.jingdianjichi.subject.domain.service.SubjectInfoDomainService;
-import com.jingdianjichi.subject.infra.basic.entity.SubjectCategory;
-import com.jingdianjichi.subject.infra.basic.entity.SubjectInfo;
-import com.jingdianjichi.subject.infra.basic.entity.SubjectLabel;
-import com.jingdianjichi.subject.infra.basic.entity.SubjectMapping;
-import com.jingdianjichi.subject.infra.basic.service.SubjectCategoryService;
-import com.jingdianjichi.subject.infra.basic.service.SubjectInfoService;
-import com.jingdianjichi.subject.infra.basic.service.SubjectLabelService;
-import com.jingdianjichi.subject.infra.basic.service.SubjectMappingService;
+import com.jingdianjichi.subject.infra.basic.entity.*;
+import com.jingdianjichi.subject.infra.basic.service.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -46,6 +42,9 @@ public class SubjectInfoDomainServiceImpl implements SubjectInfoDomainService {
 
     @Resource
     private SubjectTypeHandlerFactory subjectTypeHandlerFactory;
+
+    @Resource
+    private SubjectEsService subjectEsService;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -73,6 +72,16 @@ public class SubjectInfoDomainServiceImpl implements SubjectInfoDomainService {
             });
         });
         subjectMappingService.batchInsert(mappingList);
+        //同步到es
+        SubjectInfoEs subjectInfoEs = new SubjectInfoEs();
+        subjectInfoEs.setDocId(new IdWorkerUtil(1,1,1).nextId());
+        subjectInfoEs.setSubjectId(subjectInfo.getId());
+        subjectInfoEs.setSubjectAnswer(subjectInfoBO.getSubjectAnswer());
+        subjectInfoEs.setCreateTime(new Date().getTime());
+        subjectInfoEs.setCreateUser("鸡翅");
+        subjectInfoEs.setSubjectName(subjectInfo.getSubjectName());
+        subjectInfoEs.setSubjectType(subjectInfo.getSubjectType());
+        subjectEsService.insert(subjectInfoEs);
     }
 
     @Override
