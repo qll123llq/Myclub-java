@@ -74,7 +74,7 @@ public class SubjectInfoDomainServiceImpl implements SubjectInfoDomainService {
         subjectMappingService.batchInsert(mappingList);
         //同步到es
         SubjectInfoEs subjectInfoEs = new SubjectInfoEs();
-        subjectInfoEs.setDocId(new IdWorkerUtil(1,1,1).nextId());
+        subjectInfoEs.setDocId(new IdWorkerUtil(1, 1, 1).nextId());
         subjectInfoEs.setSubjectId(subjectInfo.getId());
         subjectInfoEs.setSubjectAnswer(subjectInfoBO.getSubjectAnswer());
         subjectInfoEs.setCreateTime(new Date().getTime());
@@ -99,7 +99,7 @@ public class SubjectInfoDomainServiceImpl implements SubjectInfoDomainService {
         List<SubjectInfo> subjectInfoList = subjectInfoService.queryPage(subjectInfo, subjectInfoBO.getCategoryId()
                 , subjectInfoBO.getLabelId(), start, subjectInfoBO.getPageSize());
         List<SubjectInfoBO> subjectInfoBOS = SubjectInfoConverter.INSTANCE.convertListInfoToBO(subjectInfoList);
-        subjectInfoBOS.forEach(info->{
+        subjectInfoBOS.forEach(info -> {
             SubjectMapping subjectMapping = new SubjectMapping();
             subjectMapping.setSubjectId(info.getId());
             List<SubjectMapping> mappingList = subjectMappingService.queryLabelId(subjectMapping);
@@ -128,6 +128,15 @@ public class SubjectInfoDomainServiceImpl implements SubjectInfoDomainService {
         List<String> labelNameList = labelList.stream().map(SubjectLabel::getLabelName).collect(Collectors.toList());
         bo.setLabelName(labelNameList);
         return bo;
+    }
+
+    @Override
+    public PageResult<SubjectInfoEs> getSubjectPageBySearch(SubjectInfoBO subjectInfoBO) {
+        SubjectInfoEs subjectInfoEs = new SubjectInfoEs();
+        subjectInfoEs.setPageNo(subjectInfoBO.getPageNo());
+        subjectInfoEs.setPageSize(subjectInfoBO.getPageSize());
+        subjectInfoEs.setKeyWord(subjectInfoBO.getKeyWord());
+        return subjectEsService.querySubjectList(subjectInfoEs);
     }
 
 
