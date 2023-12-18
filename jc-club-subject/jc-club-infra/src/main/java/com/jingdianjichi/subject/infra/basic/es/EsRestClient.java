@@ -1,10 +1,14 @@
 package com.jingdianjichi.subject.infra.basic.es;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.http.HttpHost;
+import org.apache.http.util.EntityUtils;
+import org.elasticsearch.action.bulk.BulkItemResponse;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.delete.DeleteRequest;
@@ -19,9 +23,12 @@ import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.client.*;
 import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.reindex.BulkByScrollResponse;
 import org.elasticsearch.index.reindex.DeleteByQueryRequest;
+import org.elasticsearch.index.reindex.UpdateByQueryRequest;
+import org.elasticsearch.script.Script;
 import org.elasticsearch.search.Scroll;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.fetch.subphase.FetchSourceContext;
@@ -254,6 +261,78 @@ public class EsRestClient {
             log.error("searchWithTermQuery.exception:{}", e.getMessage(), e);
         }
         return null;
+    }
+
+    public static boolean batchInsertDoc(EsIndexInfo esIndexInfo, List<EsSourceData> esSourceDataList) {
+        if (log.isInfoEnabled()) {
+            log.info("批量新增ES:" + esSourceDataList.size());
+            log.info("indexName:" + esIndexInfo.getIndexName());
+        }
+        try {
+            boolean flag = false;
+            BulkRequest bulkRequest = new BulkRequest();
+
+            for (EsSourceData source : esSourceDataList) {
+                String docId = source.getDocId();
+                if (StringUtils.isNotBlank(docId)) {
+                    IndexRequest indexRequest = new IndexRequest(esIndexInfo.getIndexName());
+                    indexRequest.id(docId);
+                    indexRequest.source(source.getData());
+                    bulkRequest.add(indexRequest);
+                    flag = true;
+                }
+            }
+
+
+            if (flag) {
+                BulkResponse response = getClient(esIndexInfo.getClusterName()).bulk(bulkRequest, COMMON_OPTIONS);
+                if (response.hasFailures()) {
+                    return false;
+                }
+            }
+        } catch (Exception e) {
+            log.error("batchInsertDoc.error", e);
+        }
+
+        return true;
+    }
+
+    public static boolean updateByQuery(EsIndexInfo esIndexInfo, QueryBuilder queryBuilder, Script script, int batchSize) {
+        if (log.isInfoEnabled()) {
+            log.info("updateByQuery.indexName:" + esIndexInfo.getIndexName());
+        }
+        try {
+            UpdateByQueryRequest updateByQueryRequest = new UpdateByQueryRequest(esIndexInfo.getIndexName());
+            updateByQueryRequest.setQuery(queryBuilder);
+            updateByQueryRequest.setScript(script);
+            updateByQueryRequest.setBatchSize(batchSize);
+            updateByQueryRequest.setAbortOnVersionConflict(false);
+            BulkByScrollResponse response = getClient(esIndexInfo.getClusterName()).updateByQuery(updateByQueryRequest, RequestOptions.DEFAULT);
+            List<BulkItemResponse.Failure> failures = response.getBulkFailures();
+        } catch (Exception e) {
+            log.error("updateByQuery.error", e);
+        }
+        return true;
+    }
+
+    /**
+     * 分词方法
+     */
+    public static List<String> getAnalyze(EsIndexInfo esIndexInfo, String text) throws Exception {
+        List<String> list = new ArrayList<String>();
+        Request request = new Request("GET", "_analyze");
+        JSONObject entity = new JSONObject();
+        entity.put("analyzer", "ik_smart");
+        entity.put("text", text);
+        request.setJsonEntity(entity.toJSONString());
+        Response response = getClient(esIndexInfo.getClusterName()).getLowLevelClient().performRequest(request);
+        JSONObject tokens = JSONObject.parseObject(EntityUtils.toString(response.getEntity()));
+        JSONArray arrays = tokens.getJSONArray("tokens");
+        for (int i = 0; i < arrays.size(); i++) {
+            JSONObject obj = JSON.parseObject(arrays.getString(i));
+            list.add(obj.getString("token"));
+        }
+        return list;
     }
 
 
