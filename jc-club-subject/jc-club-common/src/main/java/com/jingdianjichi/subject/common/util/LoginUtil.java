@@ -1,6 +1,7 @@
-package com.jingdianjichi.subject.application.util;
+package com.jingdianjichi.subject.common.util;
 
-import com.jingdianjichi.subject.application.context.LoginContextHolder;
+
+import com.jingdianjichi.subject.common.context.LoginContextHolder;
 
 /**
  * 用户登录util
