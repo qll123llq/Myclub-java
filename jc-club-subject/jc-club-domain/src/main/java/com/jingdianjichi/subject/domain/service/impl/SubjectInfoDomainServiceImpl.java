@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jingdianjichi.subject.common.entity.PageResult;
 import com.jingdianjichi.subject.common.enums.IsDeletedFlagEnum;
 import com.jingdianjichi.subject.common.util.IdWorkerUtil;
+import com.jingdianjichi.subject.common.util.LoginUtil;
 import com.jingdianjichi.subject.domain.convert.SubjectCategoryConverter;
 import com.jingdianjichi.subject.domain.convert.SubjectInfoConverter;
 import com.jingdianjichi.subject.domain.entity.SubjectCategoryBO;
@@ -12,6 +13,7 @@ import com.jingdianjichi.subject.domain.entity.SubjectInfoBO;
 import com.jingdianjichi.subject.domain.entity.SubjectOptionBO;
 import com.jingdianjichi.subject.domain.handler.subject.SubjectTypeHandler;
 import com.jingdianjichi.subject.domain.handler.subject.SubjectTypeHandlerFactory;
+import com.jingdianjichi.subject.domain.redis.RedisUtil;
 import com.jingdianjichi.subject.domain.service.SubjectCategoryDomainService;
 import com.jingdianjichi.subject.domain.service.SubjectInfoDomainService;
 import com.jingdianjichi.subject.infra.basic.entity.*;
@@ -19,6 +21,7 @@ import com.jingdianjichi.subject.infra.basic.service.*;
 import com.jingdianjichi.subject.infra.entity.UserInfo;
 import com.jingdianjichi.subject.infra.rpc.UserRpc;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -48,6 +51,11 @@ public class SubjectInfoDomainServiceImpl implements SubjectInfoDomainService {
 
     @Resource
     private UserRpc userRpc;
+
+    @Resource
+    private RedisUtil redisUtil;
+
+    private static final String RANK_KEY = "subject_rank";
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -85,6 +93,8 @@ public class SubjectInfoDomainServiceImpl implements SubjectInfoDomainService {
         subjectInfoEs.setSubjectName(subjectInfo.getSubjectName());
         subjectInfoEs.setSubjectType(subjectInfo.getSubjectType());
         subjectEsService.insert(subjectInfoEs);
+        //redis放入zadd计入排行榜
+        redisUtil.addScore(RANK_KEY, LoginUtil.getLoginId(), 1);
     }
 
     @Override
@@ -144,15 +154,18 @@ public class SubjectInfoDomainServiceImpl implements SubjectInfoDomainService {
 
     @Override
     public List<SubjectInfoBO> getContributeList() {
-        List<SubjectInfo> subjectInfoList = subjectInfoService.getContributeCount();
-        if (CollectionUtils.isEmpty(subjectInfoList)) {
+        Set<ZSetOperations.TypedTuple<String>> typedTuples = redisUtil.rankWithScore(RANK_KEY, 0, 5);
+        if (log.isInfoEnabled()) {
+            log.info("getContributeList.typedTuples:{}", JSON.toJSONString(typedTuples));
+        }
+        if (CollectionUtils.isEmpty(typedTuples)) {
             return Collections.emptyList();
         }
         List<SubjectInfoBO> boList = new LinkedList<>();
-        subjectInfoList.forEach((subjectInfo -> {
+        typedTuples.forEach((rank -> {
             SubjectInfoBO subjectInfoBO = new SubjectInfoBO();
-            subjectInfoBO.setSubjectCount(subjectInfo.getSubjectCount());
-            UserInfo userInfo = userRpc.getUserInfo(subjectInfo.getCreatedBy());
+            subjectInfoBO.setSubjectCount(rank.getScore().intValue());
+            UserInfo userInfo = userRpc.getUserInfo(rank.getValue());
             subjectInfoBO.setCreateUser(userInfo.getNickName());
             subjectInfoBO.setCreateUserAvatar(userInfo.getAvatar());
             boList.add(subjectInfoBO);
