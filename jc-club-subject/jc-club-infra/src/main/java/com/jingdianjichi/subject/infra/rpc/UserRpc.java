@@ -25,6 +25,7 @@ public class UserRpc {
         AuthUserDTO data = result.getData();
         userInfo.setUserName(data.getUserName());
         userInfo.setNickName(data.getNickName());
+        userInfo.setAvatar(data.getAvatar());
         return userInfo;
     }
 

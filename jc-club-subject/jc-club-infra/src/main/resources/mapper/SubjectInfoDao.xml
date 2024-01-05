@@ -174,6 +174,16 @@
         limit #{start},#{pageSize}
     </select>
 
+    <select id="getContributeCount" resultType="com.jingdianjichi.subject.infra.basic.entity.SubjectInfo">
+        select count(1) as subjectCount,
+               created_by as createdBy
+        from subject_info
+        where is_deleted = 0
+        and created_by is not null
+        group by created_by
+        limit 0,5
+    </select>
+
     <!--新增所有列-->
     <insert id="insert" keyProperty="id" useGeneratedKeys="true">
         <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER">
