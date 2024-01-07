@@ -58,6 +58,22 @@ public class SubjectLikedDomainServiceImpl implements SubjectLikedDomainService 
         }
     }
 
+    @Override
+    public Boolean isLiked(String subjectId, String userId) {
+        String detailKey = SUBJECT_LIKED_DETAIL_KEY + "." + subjectId + "." + userId;
+        return redisUtil.exist(detailKey);
+    }
+
+    @Override
+    public Integer getLikedCount(String subjectId) {
+        String countKey = SUBJECT_LIKED_COUNT_KEY + "." + subjectId;
+        Integer count = redisUtil.getInt(countKey);
+        if (Objects.isNull(count) || count <= 0) {
+            return 0;
+        }
+        return redisUtil.getInt(countKey);
+    }
+
     private String buildSubjectLikedKey(String subjectId, String userId) {
         return subjectId + ":" + userId;
     }
