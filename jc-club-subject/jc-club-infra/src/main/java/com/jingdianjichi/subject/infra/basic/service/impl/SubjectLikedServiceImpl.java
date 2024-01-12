@@ -3,11 +3,13 @@ package com.jingdianjichi.subject.infra.basic.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.jingdianjichi.subject.infra.basic.entity.SubjectLiked;
+import com.jingdianjichi.subject.infra.basic.entity.SubjectMapping;
 import com.jingdianjichi.subject.infra.basic.mapper.SubjectLikedDao;
 import com.jingdianjichi.subject.infra.basic.service.SubjectLikedService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -84,10 +86,14 @@ public class SubjectLikedServiceImpl implements SubjectLikedService {
                 .eq(Objects.nonNull(subjectLiked.getCreatedTime()), SubjectLiked::getCreatedTime, subjectLiked.getCreatedTime())
                 .eq(Objects.nonNull(subjectLiked.getUpdateBy()), SubjectLiked::getUpdateBy, subjectLiked.getUpdateBy())
                 .eq(Objects.nonNull(subjectLiked.getUpdateTime()), SubjectLiked::getUpdateTime, subjectLiked.getUpdateTime())
-                .eq(Objects.nonNull(subjectLiked.getIsDeleted()), SubjectLiked::getIsDeleted, subjectLiked.getIsDeleted())
-                ;
+                .eq(Objects.nonNull(subjectLiked.getIsDeleted()), SubjectLiked::getIsDeleted, subjectLiked.getIsDeleted());
         return subjectLikedDao.selectOne(queryWrapper);
 
+    }
+
+    @Override
+    public void batchInsert(List<SubjectLiked> subjectLikedList) {
+        this.subjectLikedDao.insertBatch(subjectLikedList);
     }
 
 }

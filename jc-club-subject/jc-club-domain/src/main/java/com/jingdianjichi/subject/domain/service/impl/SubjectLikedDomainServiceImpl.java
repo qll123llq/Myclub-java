@@ -1,5 +1,6 @@
 package com.jingdianjichi.subject.domain.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.jingdianjichi.subject.common.enums.IsDeletedFlagEnum;
 import com.jingdianjichi.subject.common.enums.SubjectLikedStatusEnum;
 import com.jingdianjichi.subject.domain.convert.SubjectLikedBOConverter;
@@ -9,9 +10,13 @@ import com.jingdianjichi.subject.domain.service.SubjectLikedDomainService;
 import com.jingdianjichi.subject.infra.basic.entity.SubjectLiked;
 import com.jingdianjichi.subject.infra.basic.service.SubjectLikedService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.MapUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -90,6 +95,30 @@ public class SubjectLikedDomainServiceImpl implements SubjectLikedDomainService 
         subjectLiked.setId(subjectLikedBO.getId());
         subjectLiked.setIsDeleted(IsDeletedFlagEnum.DELETED.getCode());
         return subjectLikedService.update(subjectLiked) > 0;
+    }
+
+    @Override
+    public void syncLiked() {
+        Map<Object, Object> subjectLikedMap = redisUtil.getHashAndDelete(SUBJECT_LIKED_KEY);
+        if (log.isInfoEnabled()) {
+            log.info("syncLiked.subjectLikedMap:{}", JSON.toJSONString(subjectLikedMap));
+        }
+        if (MapUtils.isEmpty(subjectLikedMap)) {
+            return;
+        }
+        //批量同步到数据库
+        List<SubjectLiked> subjectLikedList = new LinkedList<>();
+        subjectLikedMap.forEach((key, val) -> {
+            SubjectLiked subjectLiked = new SubjectLiked();
+            String[] keyArr = key.toString().split(":");
+            String subjectId = keyArr[0];
+            String likedUser = keyArr[1];
+            subjectLiked.setSubjectId(Long.valueOf(subjectId));
+            subjectLiked.setLikeUserId(likedUser);
+            subjectLiked.setStatus(Integer.valueOf(val.toString()));
+            subjectLikedList.add(subjectLiked);
+        });
+        subjectLikedService.batchInsert(subjectLikedList);
     }
 
 }
