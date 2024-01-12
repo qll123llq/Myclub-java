@@ -2,6 +2,7 @@ package com.jingdianjichi.subject.infra.basic.mapper;
 
 import com.jingdianjichi.subject.infra.basic.entity.SubjectInfo;
 import org.apache.ibatis.annotations.Param;
+
 import java.util.List;
 
 /**
@@ -83,11 +84,16 @@ public interface SubjectInfoDao {
 
     List<SubjectInfo> queryPage(@Param("subjectInfo") SubjectInfo subjectInfo,
                                 @Param("categoryId") Long categoryId,
-                                @Param("labelId")Long labelId,
+                                @Param("labelId") Long labelId,
                                 @Param("start") int start,
                                 @Param("pageSize") Integer pageSize);
 
     List<SubjectInfo> getContributeCount();
+
+    Long querySubjectIdCursor(@Param("subjectId") Long subjectId,
+                              @Param("categoryId") Long categoryId,
+                              @Param("labelId") Long labelId,
+                              @Param("cursor") int cursor);
 
 }
 

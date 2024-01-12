@@ -50,4 +50,6 @@ public interface SubjectInfoService {
 
     List<SubjectInfo> getContributeCount();
 
+    Long querySubjectIdCursor(Long subjectId, Long categoryId, Long labelId, int cursor);
+
 }
