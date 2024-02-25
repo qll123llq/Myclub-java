@@ -18,6 +18,7 @@ import com.jingdianjichi.subject.infra.basic.service.SubjectLabelService;
 import com.jingdianjichi.subject.infra.basic.service.SubjectMappingService;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -124,13 +125,17 @@ public class SubjectCategoryDomainServiceImpl implements SubjectCategoryDomainSe
         completableFutureList.forEach(future -> {
             try {
                 Map<Long, List<SubjectLabelBO>> resultMap = future.get();
-                map.putAll(resultMap);
+                if (!MapUtils.isEmpty(resultMap)) {
+                    map.putAll(resultMap);
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
         });
         categoryBOList.forEach(categoryBO -> {
-            categoryBO.setLabelBOList(map.get(categoryBO.getId()));
+            if (!CollectionUtils.isEmpty(map.get(categoryBO.getId()))) {
+                categoryBO.setLabelBOList(map.get(categoryBO.getId()));
+            }
         });
         return categoryBOList;
     }
