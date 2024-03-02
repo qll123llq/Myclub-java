@@ -127,7 +127,7 @@ public class SubjectLikedDomainServiceImpl implements SubjectLikedDomainService 
             subjectLiked.setIsDeleted(IsDeletedFlagEnum.UN_DELETED.getCode());
             subjectLikedList.add(subjectLiked);
         });
-        subjectLikedService.batchInsert(subjectLikedList);
+        subjectLikedService.batchInsertOrUpdate(subjectLikedList);
     }
 
     @Override

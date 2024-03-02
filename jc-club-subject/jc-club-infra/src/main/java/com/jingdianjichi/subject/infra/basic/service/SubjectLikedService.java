@@ -55,4 +55,6 @@ public interface SubjectLikedService {
 
     List<SubjectLiked> queryPage(SubjectLiked subjectLiked, int start, Integer pageSize);
 
+    void batchInsertOrUpdate(List<SubjectLiked> subjectLikedList);
+
 }

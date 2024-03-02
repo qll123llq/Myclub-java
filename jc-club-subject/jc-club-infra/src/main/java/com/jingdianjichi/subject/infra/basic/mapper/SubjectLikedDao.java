@@ -25,5 +25,7 @@ public interface SubjectLikedDao extends BaseMapper<SubjectLiked> {
                                  @Param("start") int start,
                                  @Param("pageSize") Integer pageSize);
 
+    void batchInsertOrUpdate(@Param("entities") List<SubjectLiked> subjectLikedList);
+
 }
 

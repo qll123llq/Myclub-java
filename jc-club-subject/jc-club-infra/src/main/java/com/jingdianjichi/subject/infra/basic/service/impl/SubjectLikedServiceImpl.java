@@ -106,4 +106,9 @@ public class SubjectLikedServiceImpl implements SubjectLikedService {
         return this.subjectLikedDao.queryPage(subjectLiked, start, pageSize);
     }
 
+    @Override
+    public void batchInsertOrUpdate(List<SubjectLiked> subjectLikedList) {
+        this.subjectLikedDao.batchInsertOrUpdate(subjectLikedList);
+    }
+
 }
