@@ -15,6 +15,7 @@ import com.jingdianjichi.subject.infra.basic.entity.SubjectInfo;
 import com.jingdianjichi.subject.infra.basic.entity.SubjectLabel;
 import com.jingdianjichi.subject.infra.basic.entity.SubjectLiked;
 import com.jingdianjichi.subject.infra.basic.entity.SubjectMapping;
+import com.jingdianjichi.subject.infra.basic.service.SubjectInfoService;
 import com.jingdianjichi.subject.infra.basic.service.SubjectLikedService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
@@ -39,6 +40,9 @@ public class SubjectLikedDomainServiceImpl implements SubjectLikedDomainService 
 
     @Resource
     private SubjectLikedService subjectLikedService;
+
+    @Resource
+    private SubjectInfoService subjectInfoService;
 
     @Resource
     private RedisUtil redisUtil;
@@ -145,9 +149,10 @@ public class SubjectLikedDomainServiceImpl implements SubjectLikedDomainService 
         List<SubjectLiked> subjectLikedList = subjectLikedService.queryPage(subjectLiked, start,
                 subjectLikedBO.getPageSize());
         List<SubjectLikedBO> subjectInfoBOS = SubjectLikedBOConverter.INSTANCE.convertListInfoToBO(subjectLikedList);
-
-
-
+        subjectInfoBOS.forEach(info -> {
+            SubjectInfo subjectInfo = subjectInfoService.queryById(info.getSubjectId());
+            info.setSubjectName(subjectInfo.getSubjectName());
+        });
         pageResult.setRecords(subjectInfoBOS);
         pageResult.setTotal(count);
         return pageResult;
