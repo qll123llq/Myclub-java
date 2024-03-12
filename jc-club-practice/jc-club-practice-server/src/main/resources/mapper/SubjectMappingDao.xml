@@ -5,13 +5,14 @@
     <select id="getLabelSubjectCount" resultType="com.jingdianjichi.practice.server.entity.po.LabelCountPO">
         select
         count(distinct a.subject_id) as count,
-        a.label_id as labelId,
+        a.label_id as labelId
         from subject_mapping a,
         subject_info b
         where
         a.subject_id = b.id
         and a.is_deleted = 0
         and b.is_deleted = 0
+        and a.category_id = #{categoryId}
         and b.subject_type in
         <foreach collection="subjectTypeList" item="item" open="(" close=")" separator=",">
             #{item}
