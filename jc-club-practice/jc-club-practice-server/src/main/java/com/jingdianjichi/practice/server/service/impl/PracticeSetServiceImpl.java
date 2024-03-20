@@ -3,6 +3,7 @@ package com.jingdianjichi.practice.server.service.impl;
 import com.google.gson.Gson;
 import com.jingdianjichi.practice.api.enums.IsDeletedFlagEnum;
 import com.jingdianjichi.practice.api.enums.SubjectInfoTypeEnum;
+import com.jingdianjichi.practice.api.req.GetPracticeSubjectsReq;
 import com.jingdianjichi.practice.api.vo.*;
 import com.jingdianjichi.practice.server.dao.*;
 import com.jingdianjichi.practice.server.entity.dto.CategoryDTO;
@@ -216,6 +217,27 @@ public class PracticeSetServiceImpl implements PracticeSetService {
             voList.add(vo);
         });
         return voList;
+    }
+
+    @Override
+    public PracticeSubjectListVO getSubjects(GetPracticeSubjectsReq req) {
+        Long setId = req.getSetId();
+        PracticeSubjectListVO vo = new PracticeSubjectListVO();
+        List<PracticeSubjectDetailVO> practiceSubjectListVOS = new LinkedList<>();
+        List<PracticeSetDetailPO> practiceSetDetailPOS = practiceSetDetailDao.selectBySetId(setId);
+        if (CollectionUtils.isEmpty(practiceSetDetailPOS)) {
+            return vo;
+        }
+        practiceSetDetailPOS.forEach(e -> {
+            PracticeSubjectDetailVO practiceSubjectListVO = new PracticeSubjectDetailVO();
+            practiceSubjectListVO.setSubjectId(e.getSubjectId());
+            practiceSubjectListVO.setSubjectType(e.getSubjectType());
+            practiceSubjectListVOS.add(practiceSubjectListVO);
+        });
+        vo.setSubjectList(practiceSubjectListVOS);
+        PracticeSetPO practiceSetPO = practiceSetDao.selectById(setId);
+        vo.setTitle(practiceSetPO.getSetName());
+        return vo;
     }
 
 }
