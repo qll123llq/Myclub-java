@@ -3,8 +3,10 @@ package com.jingdianjichi.practice.server.controller;
 import com.alibaba.fastjson.JSON;
 import com.google.common.base.Preconditions;
 import com.jingdianjichi.practice.api.common.Result;
+import com.jingdianjichi.practice.api.req.GetScoreDetailReq;
 import com.jingdianjichi.practice.api.req.SubmitPracticeDetailReq;
 import com.jingdianjichi.practice.api.req.SubmitSubjectDetailReq;
+import com.jingdianjichi.practice.api.vo.ScoreDetailVO;
 import com.jingdianjichi.practice.server.service.PracticeDetailService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -72,6 +74,31 @@ public class PracticeDetailController {
         } catch (Exception e) {
             log.error("提交练题情况异常！错误原因{}", e.getMessage(), e);
             return Result.fail("提交练题情况异常！");
+        }
+    }
+
+    /**
+     * 答案解析-每题得分
+     */
+    @PostMapping(value = "/getScoreDetail")
+    public Result<List<ScoreDetailVO>> getScoreDetail(@RequestBody GetScoreDetailReq req) {
+        try {
+            if (log.isInfoEnabled()) {
+                log.info("每题得分入参{}", JSON.toJSONString(req));
+            }
+            Preconditions.checkArgument(!Objects.isNull(req), "参数不能为空！");
+            Preconditions.checkArgument(!Objects.isNull(req.getPracticeId()), "练习id不能为空！");
+            List<ScoreDetailVO> list = practiceDetailService.getScoreDetail(req);
+            if (log.isInfoEnabled()) {
+                log.info("每题得分出参{}", JSON.toJSONString(list));
+            }
+            return Result.ok(list);
+        } catch (IllegalArgumentException e) {
+            log.error("参数异常！错误原因{}", e.getMessage(), e);
+            return Result.fail(e.getMessage());
+        } catch (Exception e) {
+            log.error("每题得分异常！错误原因{}", e.getMessage(), e);
+            return Result.fail("每题得分异常！");
         }
     }
 
