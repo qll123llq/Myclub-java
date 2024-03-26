@@ -1,6 +1,7 @@
 package com.jingdianjichi.practice.server.dao;
 
 import com.jingdianjichi.practice.server.entity.po.SubjectLabelPO;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -19,6 +20,11 @@ public interface SubjectLabelDao {
      * @return 实例对象
      */
     SubjectLabelPO queryById(Long id);
+
+    /**
+     * 批量查询当前题目的标签名称
+     */
+    List<String> getLabelNameByIds(@Param("labelIds") List<Long> labelIds);
 
 
 }
