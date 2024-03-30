@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.google.common.base.Preconditions;
 import com.jingdianjichi.practice.api.common.Result;
 import com.jingdianjichi.practice.api.req.*;
+import com.jingdianjichi.practice.api.vo.RankVO;
 import com.jingdianjichi.practice.api.vo.ReportVO;
 import com.jingdianjichi.practice.api.vo.ScoreDetailVO;
 import com.jingdianjichi.practice.api.vo.SubjectDetailVO;
@@ -150,6 +151,23 @@ public class PracticeDetailController {
         } catch (Exception e) {
             log.error("获取评估报告异常！错误原因{}", e.getMessage(), e);
             return Result.fail("获取评估报告异常！");
+        }
+    }
+
+    /**
+     * 获取练习榜
+     */
+    @PostMapping(value = "/getPracticeRankList")
+    public Result<List<RankVO>> getPracticeRankList() {
+        try {
+            List<RankVO> list = practiceDetailService.getPracticeRankList();
+            if (log.isInfoEnabled()) {
+                log.info("练习榜出参{}", list);
+            }
+            return Result.ok(list);
+        } catch (Exception e) {
+            log.error("练习榜报错！错误原因{}", e.getMessage(), e);
+            return Result.fail("练习榜异常！");
         }
     }
 
