@@ -2,17 +2,11 @@ package com.jingdianjichi.practice.server.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.nacos.common.utils.CollectionUtils;
-import com.jingdianjichi.practice.api.enums.CompleteStatusEnum;
-import com.jingdianjichi.practice.api.enums.IsDeletedFlagEnum;
-import com.jingdianjichi.practice.api.enums.SubjectInfoTypeEnum;
-import com.jingdianjichi.practice.api.req.GetScoreDetailReq;
-import com.jingdianjichi.practice.api.req.GetSubjectDetailReq;
-import com.jingdianjichi.practice.api.req.SubmitPracticeDetailReq;
-import com.jingdianjichi.practice.api.req.SubmitSubjectDetailReq;
-import com.jingdianjichi.practice.api.vo.PracticeSubjectOptionVO;
-import com.jingdianjichi.practice.api.vo.ScoreDetailVO;
-import com.jingdianjichi.practice.api.vo.SubjectDetailVO;
+import com.jingdianjichi.practice.api.enums.*;
+import com.jingdianjichi.practice.api.req.*;
+import com.jingdianjichi.practice.api.vo.*;
 import com.jingdianjichi.practice.server.dao.*;
+import com.jingdianjichi.practice.server.entity.dto.PracticeSetDTO;
 import com.jingdianjichi.practice.server.entity.dto.SubjectDTO;
 import com.jingdianjichi.practice.server.entity.dto.SubjectDetailDTO;
 import com.jingdianjichi.practice.server.entity.dto.SubjectOptionDTO;
@@ -306,6 +300,73 @@ public class PracticeDetailServiceImpl implements PracticeDetailService {
         List<String> labelNameList = subjectLabelDao.getLabelNameByIds(labelIdList);
         subjectDetailVO.setLabelNames(labelNameList);
         return subjectDetailVO;
+    }
+
+    @Override
+    public ReportVO getReport(GetReportReq req) {
+        ReportVO reportVO = new ReportVO();
+        Long practiceId = req.getPracticeId();
+        PracticePO practicePO = practiceDao.selectById(practiceId);
+        Long setId = practicePO.getSetId();
+        PracticeSetPO practiceSetPO = practiceSetDao.selectById(setId);
+        reportVO.setTitle(practiceSetPO.getSetName());
+        List<PracticeDetailPO> practiceDetailPOList = practiceDetailDao.selectByPracticeId(practiceId);
+        if (CollectionUtils.isEmpty(practiceDetailPOList)) {
+            return null;
+        }
+        int totalCount = practiceDetailPOList.size();
+        List<PracticeDetailPO> correctPoList = practiceDetailPOList.stream().filter(e ->
+                Objects.equals(e.getAnswerStatus(), AnswerStatusEnum.CORRECT.getCode())).collect(Collectors.toList());
+        reportVO.setCorrectSubject(correctPoList.size() + "/" + totalCount);
+        List<ReportSkillVO> reportSkillVOS = new LinkedList<>();
+        Map<Long, Integer> totalMap = getSubjectLabelMap(practiceDetailPOList);
+        Map<Long, Integer> correctMap = getSubjectLabelMap(correctPoList);
+        totalMap.forEach((key, val) -> {
+            ReportSkillVO skillVO = new ReportSkillVO();
+            SubjectLabelPO labelPO = subjectLabelDao.queryById(key);
+            String labelName = labelPO.getLabelName();
+            Integer correctCount = correctMap.get(key);
+            if (Objects.isNull(correctCount)) {
+                correctCount = 0;
+            }
+            skillVO.setName(labelName);
+            BigDecimal rate = BigDecimal.ZERO;
+            if (!Objects.equals(val, 0)) {
+                rate = new BigDecimal(correctCount.toString()).divide(new BigDecimal(val.toString()), 4,
+                        BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(100));
+            }
+            skillVO.setStar(rate);
+            reportSkillVOS.add(skillVO);
+        });
+        if (log.isInfoEnabled()) {
+            log.info("获取到的正确率{}", JSON.toJSONString(reportSkillVOS));
+        }
+        reportVO.setSkill(reportSkillVOS);
+        return reportVO;
+    }
+
+
+    private Map<Long, Integer> getSubjectLabelMap(List<PracticeDetailPO> practiceDetailPOList) {
+        if (CollectionUtils.isEmpty(practiceDetailPOList)) {
+            return Collections.emptyMap();
+        }
+        Map<Long, Integer> map = new HashMap<>();
+        practiceDetailPOList.forEach(detail -> {
+            Long subjectId = detail.getSubjectId();
+            List<SubjectMappingPO> labelIdPO = subjectMappingDao.getLabelIdsBySubjectId(subjectId);
+            labelIdPO.forEach(po -> {
+                Long labelId = po.getLabelId();
+                if (Objects.isNull(map.get(labelId))) {
+                    map.put(labelId, 1);
+                    return;
+                }
+                map.put(labelId, map.get(labelId) + 1);
+            });
+        });
+        if (log.isInfoEnabled()) {
+            log.info("获取到的题目对应的标签map{}", JSON.toJSONString(map));
+        }
+        return map;
     }
 
 

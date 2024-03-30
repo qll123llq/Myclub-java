@@ -1,6 +1,9 @@
 package com.jingdianjichi.practice.server.dao;
 
+import com.jingdianjichi.practice.server.entity.dto.PracticeSetDTO;
 import com.jingdianjichi.practice.server.entity.po.PracticeSetPO;
+
+import java.util.List;
 
 public interface PracticeSetDao {
 
