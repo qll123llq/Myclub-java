@@ -4,14 +4,8 @@ import com.alibaba.fastjson.JSON;
 import com.google.common.base.Preconditions;
 import com.jingdianjichi.practice.api.common.PageResult;
 import com.jingdianjichi.practice.api.common.Result;
-import com.jingdianjichi.practice.api.req.GetPracticeSubjectListReq;
-import com.jingdianjichi.practice.api.req.GetPracticeSubjectReq;
-import com.jingdianjichi.practice.api.req.GetPracticeSubjectsReq;
-import com.jingdianjichi.practice.api.req.GetPreSetReq;
-import com.jingdianjichi.practice.api.vo.PracticeSetVO;
-import com.jingdianjichi.practice.api.vo.PracticeSubjectListVO;
-import com.jingdianjichi.practice.api.vo.PracticeSubjectVO;
-import com.jingdianjichi.practice.api.vo.SpecialPracticeVO;
+import com.jingdianjichi.practice.api.req.*;
+import com.jingdianjichi.practice.api.vo.*;
 import com.jingdianjichi.practice.server.entity.dto.PracticeSetDTO;
 import com.jingdianjichi.practice.server.entity.dto.PracticeSubjectDTO;
 import com.jingdianjichi.practice.server.service.PracticeSetService;
@@ -162,6 +156,27 @@ public class PracticeSetController {
         } catch (Exception e) {
             log.error("获取模拟套题内容异常！错误原因{}", e.getMessage(), e);
             return Result.fail("获取模拟套题内容异常！");
+        }
+    }
+
+    /**
+     * 获取未完成的练题内容
+     */
+    @PostMapping(value = "/getUnCompletePractice")
+    public Result<PageResult<UnCompletePracticeSetVO>> getUnCompletePractice(@RequestBody GetUnCompletePracticeReq req) {
+        try {
+            Preconditions.checkArgument(!Objects.isNull(req), "参数不能为空！");
+            PageResult<UnCompletePracticeSetVO> list = practiceSetService.getUnCompletePractice(req);
+            if (log.isInfoEnabled()) {
+                log.info("获取未完成练习内容出参{}", JSON.toJSONString(list));
+            }
+            return Result.ok(list);
+        } catch (IllegalArgumentException e) {
+            log.error("参数异常！错误原因{}", e.getMessage(), e);
+            return Result.fail(e.getMessage());
+        } catch (Exception e) {
+            log.error("获取未完成练习内容异常！错误原因{}", e.getMessage(), e);
+            return Result.fail("获取未完成练习内容异常！");
         }
     }
 
