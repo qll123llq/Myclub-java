@@ -22,6 +22,12 @@ spring:
             - Path=/subject/**
           filters:
             - StripPrefix=1
+        - id: parctice
+          uri: lb://jc-club-practice-dev
+          predicates:
+            - Path=/parctice/**
+          filters:
+            - StripPrefix=1
   redis:
     # Redis数据库索引（默认为0）
     database: 1
