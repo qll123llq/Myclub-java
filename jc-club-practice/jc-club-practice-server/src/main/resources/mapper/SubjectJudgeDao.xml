@@ -6,7 +6,7 @@
             resultType="com.jingdianjichi.practice.server.entity.po.SubjectJudgePO">
         select  is_correct as isCorrect
         from subject_judge
-        where is_delete = 0
+        where is_deleted = 0
           and subject_id = #{subjectId,jdbcType=BIGINT}
     </select>
 
