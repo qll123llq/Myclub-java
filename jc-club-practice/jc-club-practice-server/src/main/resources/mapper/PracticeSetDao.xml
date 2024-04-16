@@ -45,7 +45,7 @@
             order by set_name desc
         </if>
         <if test="orderType != null and orderType == 1">
-            order by create_time desc
+            order by createdTime desc
         </if>
         <if test="orderType != null and orderType == 2">
             order by set_heat desc
