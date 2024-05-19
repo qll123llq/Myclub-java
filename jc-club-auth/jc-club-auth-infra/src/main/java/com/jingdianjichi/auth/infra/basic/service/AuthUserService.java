@@ -51,4 +51,6 @@ public interface AuthUserService {
 
     Integer updateByUserName(AuthUser authUser);
 
+    List<AuthUser> listUserInfoByIds(List<String> ids);
+
 }

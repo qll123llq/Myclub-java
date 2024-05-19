@@ -8,7 +8,7 @@ import java.util.List;
 
 /**
  * 用户领域service
- * 
+ *
  * @author: ChickenWing
  * @date: 2023/11/1
  */
@@ -33,5 +33,6 @@ public interface AuthUserDomainService {
 
     AuthUserBO getUserInfo(AuthUserBO authUserBO);
 
+    List<AuthUserBO> listUserInfoByIds(List<String> ids);
 }
 

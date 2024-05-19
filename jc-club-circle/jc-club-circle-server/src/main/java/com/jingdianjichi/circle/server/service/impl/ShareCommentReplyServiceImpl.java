@@ -14,8 +14,10 @@ import com.jingdianjichi.circle.api.req.SaveShareCommentReplyReq;
 import com.jingdianjichi.circle.api.vo.ShareCommentReplyVO;
 import com.jingdianjichi.circle.server.dao.ShareCommentReplyMapper;
 import com.jingdianjichi.circle.server.dao.ShareMomentMapper;
+import com.jingdianjichi.circle.server.entity.dto.UserInfo;
 import com.jingdianjichi.circle.server.entity.po.ShareCommentReply;
 import com.jingdianjichi.circle.server.entity.po.ShareMoment;
+import com.jingdianjichi.circle.server.rpc.UserRpc;
 import com.jingdianjichi.circle.server.service.ShareCommentReplyService;
 import com.jingdianjichi.circle.server.util.LoginUtil;
 import com.jingdianjichi.circle.server.util.TreeUtils;
@@ -27,6 +29,7 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -44,6 +47,8 @@ public class ShareCommentReplyServiceImpl extends ServiceImpl<ShareCommentReplyM
 
     @Resource
     private ShareMomentMapper shareMomentMapper;
+    @Resource
+    private UserRpc userRpc;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -120,8 +125,12 @@ public class ShareCommentReplyServiceImpl extends ServiceImpl<ShareCommentReplyM
                         ShareCommentReply::getPicUrls,
                         ShareCommentReply::getCreatedBy,
                         ShareCommentReply::getToUser,
+                        ShareCommentReply::getCreatedTime,
                         ShareCommentReply::getParentId);
         List<ShareCommentReply> list = list(query);
+        List<String> userNameList = list.stream().map(ShareCommentReply::getCreatedBy).distinct().collect(Collectors.toList());
+        Map<String, UserInfo> userInfoMap = userRpc.batchGetUserInfo(userNameList);
+        UserInfo defaultUser = new UserInfo();
         List<ShareCommentReplyVO> voList = list.stream().map(item -> {
             ShareCommentReplyVO vo = new ShareCommentReplyVO();
             vo.setId(item.getId());
@@ -136,10 +145,13 @@ public class ShareCommentReplyServiceImpl extends ServiceImpl<ShareCommentReplyM
                 vo.setToId(item.getToUser());
             }
             vo.setParentId(item.getParentId());
+            UserInfo user = userInfoMap.getOrDefault(item.getCreatedBy(), defaultUser);
+            vo.setUserName(user.getNickName());
+            vo.setAvatar(user.getAvatar());
+            vo.setCreatedTime(item.getCreatedTime().getTime());
             return vo;
         }).collect(Collectors.toList());
         return TreeUtils.buildTree(voList);
-
     }
 
 }

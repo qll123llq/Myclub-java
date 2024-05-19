@@ -2,6 +2,7 @@ package com.jingdianjichi.auth.infra.basic.mapper;
 
 import com.jingdianjichi.auth.infra.basic.entity.AuthUser;
 import org.apache.ibatis.annotations.Param;
+
 import java.util.List;
 
 /**
@@ -79,5 +80,6 @@ public interface AuthUserDao {
 
     Integer updateByUserName(AuthUser authUser);
 
+    List<AuthUser> listUserInfoByIds(@Param("userNameList") List<String> userNameList);
 }
 

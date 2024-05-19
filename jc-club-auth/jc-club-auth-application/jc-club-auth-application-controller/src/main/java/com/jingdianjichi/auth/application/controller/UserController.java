@@ -11,9 +11,14 @@ import com.jingdianjichi.auth.entity.AuthUserDTO;
 import com.jingdianjichi.auth.entity.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.util.CollectionUtils;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 @RestController
 @RequestMapping("/user/")
@@ -77,6 +82,25 @@ public class UserController {
             return Result.fail("更新用户信息失败");
         }
     }
+
+    /**
+     * 批量获取用户信息
+     */
+    @RequestMapping("listByIds")
+    public Result<List<AuthUserDTO>> listUserInfoByIds(@RequestBody List<String> userNameList) {
+        try {
+            if (log.isInfoEnabled()) {
+                log.info("UserController.listUserInfoByIds.dto:{}", JSON.toJSONString(userNameList));
+            }
+            Preconditions.checkArgument(!CollectionUtils.isEmpty(userNameList), "id集合不能为空");
+            List<AuthUserBO> userInfos = authUserDomainService.listUserInfoByIds(userNameList);
+            return Result.ok(AuthUserDTOConverter.INSTANCE.convertBOToDTO(userInfos));
+        } catch (Exception e) {
+            log.error("UserController.listUserInfoByIds.error:{}", e.getMessage(), e);
+            return Result.fail("批量获取用户信息失败");
+        }
+    }
+
 
     /**
      * 用户退出

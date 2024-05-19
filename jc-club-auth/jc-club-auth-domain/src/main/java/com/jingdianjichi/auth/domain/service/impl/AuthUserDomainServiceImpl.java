@@ -11,22 +11,28 @@ import com.jingdianjichi.auth.domain.convert.AuthUserBOConverter;
 import com.jingdianjichi.auth.domain.entity.AuthUserBO;
 import com.jingdianjichi.auth.domain.redis.RedisUtil;
 import com.jingdianjichi.auth.domain.service.AuthUserDomainService;
-import com.jingdianjichi.auth.infra.basic.entity.*;
-import com.jingdianjichi.auth.infra.basic.service.*;
+import com.jingdianjichi.auth.infra.basic.entity.AuthPermission;
+import com.jingdianjichi.auth.infra.basic.entity.AuthRole;
+import com.jingdianjichi.auth.infra.basic.entity.AuthRolePermission;
+import com.jingdianjichi.auth.infra.basic.entity.AuthUser;
+import com.jingdianjichi.auth.infra.basic.entity.AuthUserRole;
+import com.jingdianjichi.auth.infra.basic.service.AuthPermissionService;
+import com.jingdianjichi.auth.infra.basic.service.AuthRolePermissionService;
+import com.jingdianjichi.auth.infra.basic.service.AuthRoleService;
+import com.jingdianjichi.auth.infra.basic.service.AuthUserRoleService;
+import com.jingdianjichi.auth.infra.basic.service.AuthUserService;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 @Slf4j
@@ -152,10 +158,20 @@ public class AuthUserDomainServiceImpl implements AuthUserDomainService {
         AuthUser authUser = new AuthUser();
         authUser.setUserName(authUserBO.getUserName());
         List<AuthUser> userList = authUserService.queryByCondition(authUser);
-        if(CollectionUtils.isEmpty(userList)){
+        if (CollectionUtils.isEmpty(userList)) {
             return new AuthUserBO();
         }
         AuthUser user = userList.get(0);
         return AuthUserBOConverter.INSTANCE.convertEntityToBO(user);
     }
+
+    @Override
+    public List<AuthUserBO> listUserInfoByIds(List<String> userNameList) {
+        List<AuthUser> userList = authUserService.listUserInfoByIds(userNameList);
+        if (CollectionUtils.isEmpty(userList)) {
+            return Collections.emptyList();
+        }
+        return AuthUserBOConverter.INSTANCE.convertEntityToBO(userList);
+    }
+
 }
