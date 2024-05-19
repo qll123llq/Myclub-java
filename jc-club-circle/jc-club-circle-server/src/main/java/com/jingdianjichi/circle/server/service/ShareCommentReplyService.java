@@ -1,9 +1,13 @@
 package com.jingdianjichi.circle.server.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.jingdianjichi.circle.api.req.GetShareCommentReq;
 import com.jingdianjichi.circle.api.req.RemoveShareCommentReq;
 import com.jingdianjichi.circle.api.req.SaveShareCommentReplyReq;
+import com.jingdianjichi.circle.api.vo.ShareCommentReplyVO;
 import com.jingdianjichi.circle.server.entity.po.ShareCommentReply;
+
+import java.util.List;
 
 /**
  * <p>
@@ -18,5 +22,7 @@ public interface ShareCommentReplyService extends IService<ShareCommentReply> {
     Boolean saveComment(SaveShareCommentReplyReq req);
 
     Boolean removeComment(RemoveShareCommentReq req);
+
+    List<ShareCommentReplyVO> listComment(GetShareCommentReq req);
 
 }
