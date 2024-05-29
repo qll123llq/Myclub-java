@@ -1,7 +1,10 @@
 package com.jingdianjichi.interview.server.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.jingdianjichi.interview.api.common.PageResult;
+import com.jingdianjichi.interview.api.req.InterviewHistoryReq;
 import com.jingdianjichi.interview.api.req.InterviewSubmitReq;
+import com.jingdianjichi.interview.api.vo.InterviewHistoryVO;
 import com.jingdianjichi.interview.api.vo.InterviewResultVO;
 import com.jingdianjichi.interview.server.entity.po.InterviewHistory;
 
@@ -14,5 +17,8 @@ import com.jingdianjichi.interview.server.entity.po.InterviewHistory;
 public interface InterviewHistoryService extends IService<InterviewHistory> {
 
     void logInterview(InterviewSubmitReq req, InterviewResultVO submit);
+
+
+    PageResult<InterviewHistoryVO> getHistory(InterviewHistoryReq req);
 
 }
