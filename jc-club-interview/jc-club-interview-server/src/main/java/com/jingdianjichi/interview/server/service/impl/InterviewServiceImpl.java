@@ -2,6 +2,8 @@ package com.jingdianjichi.interview.server.service.impl;
 
 import com.google.common.base.Preconditions;
 import com.jingdianjichi.interview.api.req.InterviewReq;
+import com.jingdianjichi.interview.api.req.StartReq;
+import com.jingdianjichi.interview.api.vo.InterviewQuestionVO;
 import com.jingdianjichi.interview.api.vo.InterviewVO;
 import com.jingdianjichi.interview.server.dao.SubjectDao;
 import com.jingdianjichi.interview.server.entity.po.SubjectLabel;
@@ -41,6 +43,13 @@ public class InterviewServiceImpl implements InterviewService, ApplicationContex
         InterviewEngine engine = engineMap.get(req.getEngine());
         Preconditions.checkArgument(!Objects.isNull(engine), "引擎不能为空！");
         return engine.analyse(keyWords);
+    }
+
+    @Override
+    public InterviewQuestionVO start(StartReq req) {
+        InterviewEngine engine = engineMap.get(req.getEngine());
+        Preconditions.checkArgument(!Objects.isNull(engine), "引擎不能为空！");
+        return engine.start(req);
     }
 
     private List<String> buildKeyWords(String url) {
