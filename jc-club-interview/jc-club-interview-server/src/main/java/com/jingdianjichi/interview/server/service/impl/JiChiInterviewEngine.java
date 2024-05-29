@@ -1,14 +1,17 @@
 package com.jingdianjichi.interview.server.service.impl;
 
 import com.jingdianjichi.interview.api.enums.EngineEnum;
+import com.jingdianjichi.interview.api.req.InterviewSubmitReq;
 import com.jingdianjichi.interview.api.req.StartReq;
 import com.jingdianjichi.interview.api.vo.InterviewQuestionVO;
+import com.jingdianjichi.interview.api.vo.InterviewResultVO;
 import com.jingdianjichi.interview.api.vo.InterviewVO;
 import com.jingdianjichi.interview.server.dao.SubjectDao;
 import com.jingdianjichi.interview.server.entity.po.SubjectCategory;
 import com.jingdianjichi.interview.server.entity.po.SubjectInfo;
 import com.jingdianjichi.interview.server.entity.po.SubjectLabel;
 import com.jingdianjichi.interview.server.service.InterviewEngine;
+import com.jingdianjichi.interview.server.util.EvaluateUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -89,6 +92,26 @@ public class JiChiInterviewEngine implements InterviewEngine {
         }
         InterviewQuestionVO vo = new InterviewQuestionVO();
         vo.setQuestionList(views);
+        return vo;
+
+    }
+
+    @Override
+    public InterviewResultVO submit(InterviewSubmitReq req) {
+
+        List<InterviewSubmitReq.Submit> submits = req.getQuestionList();
+        double total = submits.stream().mapToDouble(InterviewSubmitReq.Submit::getUserScore).sum();
+        double avg = total / submits.size();
+        String avtTips = EvaluateUtils.avgEvaluate(avg);
+        String tips = submits.stream().map(item -> {
+            String keyWord = item.getLabelName();
+            String evaluate = EvaluateUtils.evaluate(item.getUserScore());
+            return String.format(evaluate, keyWord);
+        }).distinct().collect(Collectors.joining(";"));
+        InterviewResultVO vo = new InterviewResultVO();
+        vo.setAvgScore(avg);
+        vo.setTips(tips);
+        vo.setAvgTips(avtTips);
         return vo;
 
     }
