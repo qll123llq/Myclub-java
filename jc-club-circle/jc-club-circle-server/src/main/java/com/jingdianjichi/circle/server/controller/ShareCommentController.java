@@ -37,7 +37,7 @@ import java.util.Objects;
  */
 @Slf4j
 @RestController
-@RequestMapping("/share/comment")
+@RequestMapping("/circle/share/comment")
 public class ShareCommentController {
 
     @Resource

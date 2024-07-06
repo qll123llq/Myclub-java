@@ -30,7 +30,7 @@ import java.util.Objects;
  */
 @Slf4j
 @RestController
-@RequestMapping("/share/circle")
+@RequestMapping("/circle/share/circle")
 public class ShareCircleController {
 
     @Resource
