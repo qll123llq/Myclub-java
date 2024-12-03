@@ -21,6 +21,7 @@ import com.jingdianjichi.circle.server.rpc.UserRpc;
 import com.jingdianjichi.circle.server.service.ShareCommentReplyService;
 import com.jingdianjichi.circle.server.util.LoginUtil;
 import com.jingdianjichi.circle.server.util.TreeUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -47,6 +48,10 @@ public class ShareCommentReplyServiceImpl extends ServiceImpl<ShareCommentReplyM
 
     @Resource
     private ShareMomentMapper shareMomentMapper;
+
+    @Resource
+    private ShareCommentReplyMapper shareCommentReplyMapper;
+
     @Resource
     private UserRpc userRpc;
 
@@ -69,6 +74,12 @@ public class ShareCommentReplyServiceImpl extends ServiceImpl<ShareCommentReplyM
             comment.setReplyId(req.getTargetId());
             comment.setReplyUser(loginId);
             comment.setReplayAuthor(Objects.nonNull(moment.getCreatedBy()) && loginId.equals(moment.getCreatedBy()) ? 1 : 0);
+
+            //查replyId对应的内容
+            ShareCommentReply shareCommentReply = shareCommentReplyMapper.selectById(req.getTargetId());
+            comment.setToId(req.getTargetId());
+            comment.setToUser(shareCommentReply.getCreatedBy());
+            comment.setToUserAuthor(Objects.nonNull(shareCommentReply.getCreatedBy()) && loginId.equals(shareCommentReply.getCreatedBy()) ? 1 : 0);
         }
         comment.setContent(req.getContent());
         if (!CollectionUtils.isEmpty(req.getPicUrlList())) {
@@ -129,6 +140,8 @@ public class ShareCommentReplyServiceImpl extends ServiceImpl<ShareCommentReplyM
                         ShareCommentReply::getParentId);
         List<ShareCommentReply> list = list(query);
         List<String> userNameList = list.stream().map(ShareCommentReply::getCreatedBy).distinct().collect(Collectors.toList());
+        List<String> toUserNameList = list.stream().map(ShareCommentReply::getToUser).distinct().collect(Collectors.toList());
+        userNameList.addAll(toUserNameList);
         Map<String, UserInfo> userInfoMap = userRpc.batchGetUserInfo(userNameList);
         UserInfo defaultUser = new UserInfo();
         List<ShareCommentReplyVO> voList = list.stream().map(item -> {
@@ -149,6 +162,12 @@ public class ShareCommentReplyServiceImpl extends ServiceImpl<ShareCommentReplyM
             vo.setUserName(user.getNickName());
             vo.setAvatar(user.getAvatar());
             vo.setCreatedTime(item.getCreatedTime().getTime());
+            if (StringUtils.isNotBlank(item.getToUser())) {
+                UserInfo toUser = userInfoMap.getOrDefault(item.getToUser(), defaultUser);
+                vo.setToAvatar(toUser.getAvatar());
+                vo.setToName(toUser.getNickName());
+            }
+
             return vo;
         }).collect(Collectors.toList());
         return TreeUtils.buildTree(voList);
