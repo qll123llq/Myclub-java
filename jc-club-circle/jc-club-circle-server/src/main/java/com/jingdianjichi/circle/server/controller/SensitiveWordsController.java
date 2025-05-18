@@ -77,5 +77,8 @@ public class SensitiveWordsController {
             return Result.fail("删除敏感词异常！");
         }
     }
+    @GetMapping(value = "/test")
+    public void test() {
 
+    }
 }

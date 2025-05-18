@@ -29,10 +29,48 @@ public class UserRpc {
             return userInfo;
         }
         AuthUserDTO data = result.getData();
+
+        userInfo.setId(data.getId());
         userInfo.setUserName(data.getUserName());
         userInfo.setNickName(data.getNickName());
         userInfo.setAvatar(data.getAvatar());
         return userInfo;
+    }
+
+    public UserInfo getUserById(Long id) {
+        AuthUserDTO authUserDTO = new AuthUserDTO();
+        authUserDTO.setId(id);
+        Result<AuthUserDTO> result = userFeignService.getUserInfo(authUserDTO);
+        UserInfo userInfo = new UserInfo();
+        if (!result.getSuccess()) {
+            return userInfo;
+        }
+        AuthUserDTO data = result.getData();
+
+        userInfo.setId(data.getId());
+        userInfo.setUserName(data.getUserName());
+        userInfo.setNickName(data.getNickName());
+        userInfo.setAvatar(data.getAvatar());
+        return userInfo;
+    }
+
+    public Map<Long, UserInfo> batchGetUserInfoById(List<Long> userIdList) {
+        if (CollectionUtils.isEmpty(userIdList)) {
+            return Collections.emptyMap();
+        }
+        Result<List<AuthUserDTO>> listResult = userFeignService.listUserInfoByUserIds(userIdList);
+        if (Objects.isNull(listResult) || !listResult.getSuccess() || Objects.isNull(listResult.getData())) {
+            return Collections.emptyMap();
+        }
+        Map<Long, UserInfo> result = new HashMap<>();
+        for (AuthUserDTO data : listResult.getData()) {
+            UserInfo userInfo = new UserInfo();
+            userInfo.setUserName(data.getUserName());
+            userInfo.setNickName(data.getNickName());
+            userInfo.setAvatar(data.getAvatar());
+            result.put(data.getId(), userInfo);
+        }
+        return result;
     }
 
     public Map<String, UserInfo> batchGetUserInfo(List<String> userNameList) {
@@ -53,5 +91,6 @@ public class UserRpc {
         }
         return result;
     }
+
 
 }

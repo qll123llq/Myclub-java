@@ -1,5 +1,7 @@
 package com.jingdianjichi.practice.api.common;
 
+import java.util.concurrent.locks.AbstractQueuedSynchronizer;
+
 /**
  * 分页请求实体
  *
@@ -16,6 +18,7 @@ public class PageInfo {
         if (pageNo == null || pageNo < 1) {
             return 1;
         }
+
         return pageNo;
     }
 

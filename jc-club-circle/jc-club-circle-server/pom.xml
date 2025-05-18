@@ -136,7 +136,6 @@
             <artifactId>spring-boot-starter-websocket</artifactId>
             <version>2.4.2</version>
         </dependency>
-
     </dependencies>
 
     <dependencyManagement>

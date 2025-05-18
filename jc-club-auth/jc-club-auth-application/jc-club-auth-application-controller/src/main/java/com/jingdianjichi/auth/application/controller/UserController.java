@@ -73,7 +73,7 @@ public class UserController {
             if (log.isInfoEnabled()) {
                 log.info("UserController.getUserInfo.dto:{}", JSON.toJSONString(authUserDTO));
             }
-            Preconditions.checkArgument(!StringUtils.isBlank(authUserDTO.getUserName()), "用户名不能为空");
+            //Preconditions.checkArgument(!StringUtils.isBlank(authUserDTO.getUserName()), "用户名不能为空");
             AuthUserBO authUserBO = AuthUserDTOConverter.INSTANCE.convertDTOToBO(authUserDTO);
             AuthUserBO userInfo = authUserDomainService.getUserInfo(authUserBO);
             return Result.ok(AuthUserDTOConverter.INSTANCE.convertBOToDTO(userInfo));
@@ -101,6 +101,20 @@ public class UserController {
         }
     }
 
+    @RequestMapping("listByUserIds")
+    public Result<List<AuthUserDTO>> listUserInfoByUserIds(@RequestBody List<Long> userIdList) {
+        try {
+            if (log.isInfoEnabled()) {
+                log.info("UserController.listUserInfoByIds.dto:{}", JSON.toJSONString(userIdList));
+            }
+            Preconditions.checkArgument(!CollectionUtils.isEmpty(userIdList), "id集合不能为空");
+            List<AuthUserBO> userInfos = authUserDomainService.listUserInfoByUserIds(userIdList);
+            return Result.ok(AuthUserDTOConverter.INSTANCE.convertBOToDTO(userInfos));
+        } catch (Exception e) {
+            log.error("UserController.listUserInfoByIds.error:{}", e.getMessage(), e);
+            return Result.fail("批量获取用户信息失败");
+        }
+    }
 
     /**
      * 用户退出

@@ -27,8 +27,13 @@ public class SaTokenConfigure {
                     // 登录校验 -- 拦截所有路由，并排除/user/doLogin 用于开放登录
 //                    SaRouter.match("/auth/**", "/auth/user/doLogin", r -> StpUtil.checkRole("admin"));
                     SaRouter.match("/oss/**", r -> StpUtil.checkLogin());
+                   // SaRouter.match("/admin/**", r -> StpUtil.checkRole("admin"));
                     SaRouter.match("/subject/subject/add", r -> StpUtil.checkPermission("subject:add"));
+                   // SaRouter.match("/subject/subject/delete", r -> StpUtil.checkPermission("subject:delete"));
+                   // SaRouter.match("/subject/subject/update", r -> StpUtil.checkPermission("subject:update"));
+                   // SaRouter.match("/subject/subject/get", r -> StpUtil.checkPermission("subject:get"));
                     SaRouter.match("/subject/**", r -> StpUtil.checkLogin());
+
                 })
                 ;
     }

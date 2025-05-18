@@ -63,14 +63,14 @@ public class SubjectLikedDomainServiceImpl implements SubjectLikedDomainService 
         Long subjectId = subjectLikedBO.getSubjectId();
         String likeUserId = subjectLikedBO.getLikeUserId();
         Integer status = subjectLikedBO.getStatus();
-//        String hashKey = buildSubjectLikedKey(subjectId.toString(), likeUserId);
-//        redisUtil.putHash(SUBJECT_LIKED_KEY, hashKey, status);
+        String hashKey = buildSubjectLikedKey(subjectId.toString(), likeUserId);
+        redisUtil.putHash(SUBJECT_LIKED_KEY, hashKey, status);
 
         SubjectLikedMessage subjectLikedMessage = new SubjectLikedMessage();
         subjectLikedMessage.setSubjectId(subjectId);
         subjectLikedMessage.setLikeUserId(likeUserId);
         subjectLikedMessage.setStatus(status);
-        rocketMQTemplate.convertAndSend("subject-liked", JSON.toJSONString(subjectLikedMessage));
+        //rocketMQTemplate.convertAndSend("subject-liked", JSON.toJSONString(subjectLikedMessage));
 
 
 

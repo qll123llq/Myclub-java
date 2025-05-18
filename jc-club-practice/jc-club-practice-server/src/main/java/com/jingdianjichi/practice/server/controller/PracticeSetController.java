@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * 练习套卷controller
@@ -85,6 +86,8 @@ public class PracticeSetController {
         if (log.isInfoEnabled()) {
             log.info("获取练习题入参{}", JSON.toJSONString(req));
         }
+        ReentrantLock lock = new ReentrantLock();
+        lock.lock();
         try {
             Preconditions.checkArgument(!Objects.isNull(req), "参数不能为空！");
             Preconditions.checkArgument(!Objects.isNull(req.getSetId()), "练习id不能为空！");

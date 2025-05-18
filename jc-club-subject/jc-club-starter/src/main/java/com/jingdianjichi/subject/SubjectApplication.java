@@ -17,7 +17,6 @@ import org.springframework.context.annotation.ComponentScan;
 @MapperScan("com.jingdianjichi.**.mapper")
 @EnableFeignClients(basePackages = "com.jingdianjichi")
 public class SubjectApplication {
-
     public static void main(String[] args) {
         SpringApplication.run(SubjectApplication.class);
     }

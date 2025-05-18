@@ -24,6 +24,7 @@ import com.jingdianjichi.auth.infra.basic.service.AuthUserService;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -72,9 +73,9 @@ public class AuthUserDomainServiceImpl implements AuthUserDomainService {
         AuthUser existAuthUser = new AuthUser();
         existAuthUser.setUserName(authUserBO.getUserName());
         List<AuthUser> existUser = authUserService.queryByCondition(existAuthUser);
-        if (existUser.size() > 0) {
-            return true;
-        }
+//        if (existUser.size() > 0) {
+//            return true;
+//        }
         AuthUser authUser = AuthUserBOConverter.INSTANCE.convertBOToEntity(authUserBO);
         if (StringUtils.isNotBlank(authUser.getPassword())) {
             authUser.setPassword(SaSecureUtil.md5BySalt(authUser.getPassword(), salt));
@@ -156,7 +157,7 @@ public class AuthUserDomainServiceImpl implements AuthUserDomainService {
     @Override
     public AuthUserBO getUserInfo(AuthUserBO authUserBO) {
         AuthUser authUser = new AuthUser();
-        authUser.setUserName(authUserBO.getUserName());
+        BeanUtils.copyProperties(authUserBO, authUser);
         List<AuthUser> userList = authUserService.queryByCondition(authUser);
         if (CollectionUtils.isEmpty(userList)) {
             return new AuthUserBO();
@@ -168,6 +169,15 @@ public class AuthUserDomainServiceImpl implements AuthUserDomainService {
     @Override
     public List<AuthUserBO> listUserInfoByIds(List<String> userNameList) {
         List<AuthUser> userList = authUserService.listUserInfoByIds(userNameList);
+        if (CollectionUtils.isEmpty(userList)) {
+            return Collections.emptyList();
+        }
+        return AuthUserBOConverter.INSTANCE.convertEntityToBO(userList);
+    }
+
+    @Override
+    public List<AuthUserBO> listUserInfoByUserIds(List<Long> ids) {
+        List<AuthUser> userList = authUserService.listUserInfoByUserIds(ids);
         if (CollectionUtils.isEmpty(userList)) {
             return Collections.emptyList();
         }

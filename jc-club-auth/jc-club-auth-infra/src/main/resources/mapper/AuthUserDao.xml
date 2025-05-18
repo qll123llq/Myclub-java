@@ -167,6 +167,17 @@
         </foreach>
     </select>
 
+    <select id="listUserInfoByUserIds" resultType="com.jingdianjichi.auth.infra.basic.entity.AuthUser">
+        select
+        id, user_name, nick_name, email, phone, password, sex, avatar, status, introduce, ext_json, created_by,
+        created_time, update_by, update_time, is_deleted
+        from auth_user
+        where id in
+        <foreach collection="userIdList" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
     <!--新增所有列-->
     <insert id="insert" keyProperty="id" useGeneratedKeys="true">
         <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER">

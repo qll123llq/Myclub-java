@@ -23,4 +23,6 @@ public interface UserFeignService {
     @RequestMapping("/user/listByIds")
     Result<List<AuthUserDTO>> listUserInfoByIds(@RequestBody List<String> userNameList);
 
+    @RequestMapping("/user/listByUserIds")
+    Result<List<AuthUserDTO>> listUserInfoByUserIds(@RequestBody List<Long> userIdList);
 }

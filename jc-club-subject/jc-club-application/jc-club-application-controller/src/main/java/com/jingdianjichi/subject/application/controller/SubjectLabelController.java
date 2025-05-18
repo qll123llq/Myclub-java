@@ -17,12 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 import java.util.List;
 
-/**
- * 标签controller
- *
- * @author: ChickenWing
- * @date: 2023/10/3
- */
+
 @RestController
 @RequestMapping("/subject/label")
 @Slf4j

@@ -1,5 +1,6 @@
 package com.jingdianjichi.club.gateway.filter;
 
+import cn.dev33.satoken.reactor.context.SaReactorSyncHolder;
 import cn.dev33.satoken.stp.SaTokenInfo;
 import cn.dev33.satoken.stp.StpUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -40,10 +41,12 @@ public class LoginFilter implements GlobalFilter {
         if (url.equals("/user/doLogin")) {
             return chain.filter(exchange);
         }
+        SaReactorSyncHolder.setContext(exchange);
         SaTokenInfo tokenInfo = StpUtil.getTokenInfo();
         log.info("LoginFilter.filter.url:{}", new Gson().toJson(tokenInfo));
         String loginId = (String) tokenInfo.getLoginId();
         mutate.header("loginId", loginId);
+        SaReactorSyncHolder.clearContext();
         return chain.filter(exchange.mutate().request(mutate.build()).build());
     }
 

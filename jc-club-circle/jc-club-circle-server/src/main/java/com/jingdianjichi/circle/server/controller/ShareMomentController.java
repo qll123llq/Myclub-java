@@ -55,7 +55,9 @@ public class ShareMomentController {
             ShareCircle data = shareCircleService.getById(req.getCircleId());
             Preconditions.checkArgument((Objects.nonNull(data) && data.getParentId() != -1), "非法圈子ID！");
             Preconditions.checkArgument((Objects.nonNull(req.getContent()) || Objects.nonNull(req.getPicUrlList())), "鸡圈不能为空！");
-            wordFilter.check(req.getContent());
+
+            //wordFilter.check(req.getContent());
+            req.setContent(wordFilter.replace(req.getContent()));
             Boolean result = shareMomentService.saveMoment(req);
             if (log.isInfoEnabled()) {
                 log.info("发布内容{}", JSON.toJSONString(result));

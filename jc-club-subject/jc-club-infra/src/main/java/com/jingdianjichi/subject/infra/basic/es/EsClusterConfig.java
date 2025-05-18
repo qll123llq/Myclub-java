@@ -4,12 +4,7 @@ import lombok.Data;
 
 import java.io.Serializable;
 
-/**
- * es集群类
- * 
- * @author: ChickenWing
- * @date: 2023/12/17
- */
+
 @Data
 public class EsClusterConfig implements Serializable {
 

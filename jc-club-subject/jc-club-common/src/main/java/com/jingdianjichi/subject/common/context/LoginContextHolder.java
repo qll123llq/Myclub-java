@@ -4,12 +4,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * 登录上下文对象
- *
- * @author: ChickenWing
- * @date: 2023/11/26
- */
+
 public class LoginContextHolder {
 
     private static final InheritableThreadLocal<Map<String, Object>> THREAD_LOCAL

@@ -88,15 +88,15 @@ public class SubjectInfoDomainServiceImpl implements SubjectInfoDomainService {
         });
         subjectMappingService.batchInsert(mappingList);
         //同步到es
-        SubjectInfoEs subjectInfoEs = new SubjectInfoEs();
-        subjectInfoEs.setDocId(new IdWorkerUtil(1, 1, 1).nextId());
-        subjectInfoEs.setSubjectId(subjectInfo.getId());
-        subjectInfoEs.setSubjectAnswer(subjectInfoBO.getSubjectAnswer());
-        subjectInfoEs.setCreateTime(new Date().getTime());
-        subjectInfoEs.setCreateUser("鸡翅");
-        subjectInfoEs.setSubjectName(subjectInfo.getSubjectName());
-        subjectInfoEs.setSubjectType(subjectInfo.getSubjectType());
-        subjectEsService.insert(subjectInfoEs);
+//        SubjectInfoEs subjectInfoEs = new SubjectInfoEs();
+//        subjectInfoEs.setDocId(new IdWorkerUtil(1, 1, 1).nextId());
+//        subjectInfoEs.setSubjectId(subjectInfo.getId());
+//        subjectInfoEs.setSubjectAnswer(subjectInfoBO.getSubjectAnswer());
+//        subjectInfoEs.setCreateTime(new Date().getTime());
+//        subjectInfoEs.setCreateUser("鸡翅");
+//        subjectInfoEs.setSubjectName(subjectInfo.getSubjectName());
+//        subjectInfoEs.setSubjectType(subjectInfo.getSubjectType());
+//        subjectEsService.insert(subjectInfoEs);
         //redis放入zadd计入排行榜
         redisUtil.addScore(RANK_KEY, LoginUtil.getLoginId(), 1);
     }

@@ -53,4 +53,5 @@ public interface AuthUserService {
 
     List<AuthUser> listUserInfoByIds(List<String> ids);
 
+    List<AuthUser> listUserInfoByUserIds(List<Long> ids);
 }

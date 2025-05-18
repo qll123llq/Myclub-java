@@ -7,7 +7,7 @@ public class Result<T> {
 
     private Boolean success;
 
-    private Integer code;
+    private Integer errno;
 
     private String message;
 
@@ -16,7 +16,7 @@ public class Result<T> {
     public static Result ok(){
         Result result = new Result();
         result.setSuccess(true);
-        result.setCode(ResultCodeEnum.SUCCESS.getCode());
+        result.setErrno(ResultCodeEnum.SUCCESS.getCode());
         result.setMessage(ResultCodeEnum.SUCCESS.getDesc());
         return result;
     }
@@ -24,16 +24,30 @@ public class Result<T> {
     public static <T> Result ok(T data){
         Result result = new Result();
         result.setSuccess(true);
-        result.setCode(ResultCodeEnum.SUCCESS.getCode());
+        result.setErrno(ResultCodeEnum.SUCCESS.getCode());
         result.setMessage(ResultCodeEnum.SUCCESS.getDesc());
         result.setData(data);
         return result;
     }
-
+    public static <T> Result okByEditor(T data){
+        Result result = new Result();
+        result.setSuccess(true);
+        result.setErrno(0);
+        result.setMessage(ResultCodeEnum.SUCCESS.getDesc());
+        result.setData(data);
+        return result;
+    }
+    public static Result failByEditor(){
+        Result result = new Result();
+        result.setSuccess(false);
+        result.setErrno(1);
+        result.setMessage(ResultCodeEnum.FAIL.getDesc());
+        return result;
+    }
     public static Result fail(){
         Result result = new Result();
         result.setSuccess(false);
-        result.setCode(ResultCodeEnum.FAIL.getCode());
+        result.setErrno(ResultCodeEnum.FAIL.getCode());
         result.setMessage(ResultCodeEnum.FAIL.getDesc());
         return result;
     }
@@ -41,7 +55,7 @@ public class Result<T> {
     public static <T> Result fail(T data){
         Result result = new Result();
         result.setSuccess(false);
-        result.setCode(ResultCodeEnum.FAIL.getCode());
+        result.setErrno(ResultCodeEnum.FAIL.getCode());
         result.setMessage(ResultCodeEnum.FAIL.getDesc());
         result.setData(data);
         return result;

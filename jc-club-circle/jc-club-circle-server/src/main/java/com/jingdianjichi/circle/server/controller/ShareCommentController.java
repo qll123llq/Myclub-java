@@ -64,7 +64,9 @@ public class ShareCommentController {
             ShareMoment moment = shareMomentService.getById(req.getMomentId());
             Preconditions.checkArgument((Objects.nonNull(moment) && moment.getIsDeleted() != IsDeletedFlagEnum.DELETED.getCode()), "非法内容！");
             Preconditions.checkArgument((Objects.nonNull(req.getContent()) || Objects.nonNull(req.getPicUrlList())), "内容不能为空！");
-            wordFilter.check(req.getContent());
+            //敏感词过滤
+            //wordFilter.check(req.getContent());
+            req.setContent(wordFilter.replace(req.getContent()));
             Boolean result = shareCommentReplyService.saveComment(req);
             if (req.getReplyType() == 1) {
                 shareMessageService.comment(LoginUtil.getLoginId(), moment.getCreatedBy(), moment.getId());
