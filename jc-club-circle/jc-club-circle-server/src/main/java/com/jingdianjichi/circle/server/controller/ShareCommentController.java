@@ -10,9 +10,11 @@ import com.jingdianjichi.circle.api.req.GetShareCommentReq;
 import com.jingdianjichi.circle.api.req.RemoveShareCommentReq;
 import com.jingdianjichi.circle.api.req.SaveShareCommentReplyReq;
 import com.jingdianjichi.circle.api.vo.ShareCommentReplyVO;
+import com.jingdianjichi.circle.server.entity.po.ShareArticle;
 import com.jingdianjichi.circle.server.entity.po.ShareCommentReply;
 import com.jingdianjichi.circle.server.entity.po.ShareMoment;
 import com.jingdianjichi.circle.server.sensitive.WordFilter;
+import com.jingdianjichi.circle.server.service.ShareArticleService;
 import com.jingdianjichi.circle.server.service.ShareCommentReplyService;
 import com.jingdianjichi.circle.server.service.ShareMessageService;
 import com.jingdianjichi.circle.server.service.ShareMomentService;
@@ -41,7 +43,7 @@ import java.util.Objects;
 public class ShareCommentController {
 
     @Resource
-    private ShareMomentService shareMomentService;
+    private ShareArticleService shareArticleService;
     @Resource
     private ShareCommentReplyService shareCommentReplyService;
     @Resource
@@ -61,22 +63,22 @@ public class ShareCommentController {
             Preconditions.checkArgument(Objects.nonNull(req), "参数不能为空！");
             Preconditions.checkArgument(Objects.nonNull(req.getReplyType()), "类型不能为空！");
             Preconditions.checkArgument(Objects.nonNull(req.getMomentId()), "内容ID不能为空！");
-            ShareMoment moment = shareMomentService.getById(req.getMomentId());
-            Preconditions.checkArgument((Objects.nonNull(moment) && moment.getIsDeleted() != IsDeletedFlagEnum.DELETED.getCode()), "非法内容！");
+            ShareArticle article = shareArticleService.getById(req.getMomentId());
+            Preconditions.checkArgument((Objects.nonNull(article) && article.getIsDeleted() != IsDeletedFlagEnum.DELETED.getCode()), "非法内容！");
             Preconditions.checkArgument((Objects.nonNull(req.getContent()) || Objects.nonNull(req.getPicUrlList())), "内容不能为空！");
             //敏感词过滤
             //wordFilter.check(req.getContent());
             req.setContent(wordFilter.replace(req.getContent()));
             Boolean result = shareCommentReplyService.saveComment(req);
-            if (req.getReplyType() == 1) {
-                shareMessageService.comment(LoginUtil.getLoginId(), moment.getCreatedBy(), moment.getId());
-            } else {
-                LambdaQueryWrapper<ShareCommentReply> query = Wrappers.<ShareCommentReply>lambdaQuery()
-                        .eq(ShareCommentReply::getId, req.getTargetId())
-                        .select(ShareCommentReply::getCreatedBy);
-                ShareCommentReply reply = shareCommentReplyService.getOne(query);
-                shareMessageService.reply(LoginUtil.getLoginId(), reply.getCreatedBy(), moment.getId());
-            }
+//            if (req.getReplyType() == 1) {
+//                shareMessageService.comment(LoginUtil.getLoginId(), article.getCreatedBy(), moment.getId());
+//            } else {
+//                LambdaQueryWrapper<ShareCommentReply> query = Wrappers.<ShareCommentReply>lambdaQuery()
+//                        .eq(ShareCommentReply::getId, req.getTargetId())
+//                        .select(ShareCommentReply::getCreatedBy);
+//                ShareCommentReply reply = shareCommentReplyService.getOne(query);
+//                shareMessageService.reply(LoginUtil.getLoginId(), reply.getCreatedBy(), moment.getId());
+//            }
             if (log.isInfoEnabled()) {
                 log.info("发布内容{}", JSON.toJSONString(result));
             }

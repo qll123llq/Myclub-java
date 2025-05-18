@@ -21,7 +21,7 @@ import java.util.Date;
 @Getter
 @Setter
 @TableName("share_comment_reply")
-public class ShareCommentReply extends TreeNode implements Serializable {
+public class ShareCommentReply implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -108,14 +108,6 @@ public class ShareCommentReply extends TreeNode implements Serializable {
 
     private Long parentId;
 
-    @Override
-    public Long getNodeId() {
-        return id;
-    }
 
-    @Override
-    public Long getNodePId() {
-        return parentId;
-    }
 
 }

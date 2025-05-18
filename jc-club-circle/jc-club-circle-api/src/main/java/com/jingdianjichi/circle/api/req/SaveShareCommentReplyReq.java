@@ -31,6 +31,11 @@ public class SaveShareCommentReplyReq implements Serializable {
     private Integer replyType;
 
     /**
+     * 回复目标
+     */
+
+    private Long replyId;
+    /**
      * 评论目标id 评论则是动态ID 回复则是评论内容ID
      */
     private Long targetId;

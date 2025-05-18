@@ -17,6 +17,7 @@ import com.jingdianjichi.circle.server.dao.ShareArticleMapper;
 import com.jingdianjichi.circle.server.entity.dto.UserInfo;
 import com.jingdianjichi.circle.server.entity.po.ShareArticle;
 import com.jingdianjichi.circle.server.entity.po.ShareArticleDetail;
+import com.jingdianjichi.circle.server.entity.po.ShareMoment;
 import com.jingdianjichi.circle.server.rpc.UserRpc;
 import com.jingdianjichi.circle.server.service.ShareArticleService;
 import org.springframework.beans.BeanUtils;
@@ -119,5 +120,10 @@ public class ShareArticleServiceImpl implements ShareArticleService {
         BeanUtils.copyProperties(shareArticleDetail, shareArticleVo);
         shareArticleVo.setAuthorVo(authorVo);
         return shareArticleVo;
+    }
+
+    @Override
+    public ShareArticle getById(Long momentId) {
+        return shareArticleMapper.selectById(momentId);
     }
 }

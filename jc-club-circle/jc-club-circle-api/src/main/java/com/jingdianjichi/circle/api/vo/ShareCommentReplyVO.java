@@ -17,7 +17,7 @@ import java.util.List;
  */
 @Getter
 @Setter
-public class ShareCommentReplyVO extends TreeNode implements Serializable {
+public class ShareCommentReplyVO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -34,6 +34,16 @@ public class ShareCommentReplyVO extends TreeNode implements Serializable {
     private Integer replyType;
 
     /**
+     * 子评论
+     */
+
+    private List<ShareCommentReplyVO> shareCommentReplyVOS;
+
+    /**
+     * 回复的评论
+     */
+    private String parentContent;
+    /**
      * 内容
      */
     private String content;
@@ -45,7 +55,7 @@ public class ShareCommentReplyVO extends TreeNode implements Serializable {
 
     private String fromId;
 
-    private String toId;
+    private Long toId;
 
     private String toName;
 
@@ -57,16 +67,11 @@ public class ShareCommentReplyVO extends TreeNode implements Serializable {
 
     private String avatar;
 
+    /**
+     * 创建人
+     */
+    private String createdBy;
     private long createdTime;
 
-    @Override
-    public Long getNodeId() {
-        return id;
-    }
-
-    @Override
-    public Long getNodePId() {
-        return parentId;
-    }
 
 }
